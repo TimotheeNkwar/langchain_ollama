@@ -258,7 +258,7 @@ Each movie document in MongoDB contains:
 
 ### Custom Queries
 
-You can extend the agent by adding new tools in `movie_agent.py`:
+You can extend the agent by adding new tools in `agent.py`:
 
 ```python
 Tool(
