@@ -8,23 +8,46 @@ Get your AI Movie Agent running in 5 minutes!
 pip install -r requirements.txt
 ```
 
-## Step 2: Setup Environment
+## Step 2: Install and Start Ollama
+
+1. Download Ollama from [ollama.ai](https://ollama.ai)
+
+2. Install and start Ollama
+
+3. Pull a model (choose one):
+   ```bash
+   ollama pull mistral
+   # or
+   ollama pull llama3.2
+   # or
+   ollama pull llama3.1
+   # or
+   ollama pull qwen2.5
+   ```
+
+4. Verify Ollama is running:
+   ```bash
+   ollama list
+   ```
+
+## Step 3: Setup Environment
 
 1. Copy `.env.example` to `.env`:
    ```bash
    copy .env.example .env
    ```
 
-2. Edit `.env` and add your OpenAI API key:
+2. Edit `.env` and configure:
    ```
-   OPENAI_API_KEY=sk-your-key-here
+   OLLAMA_BASE_URL=http://localhost:11434
+   OLLAMA_MODEL=mistral
    ```
 
 3. Configure MongoDB (choose one):
    - **Local**: Keep default `MONGODB_URI=mongodb://localhost:27017/`
    - **Atlas**: Use your connection string
 
-## Step 3: Start MongoDB
+## Step 4: Start MongoDB
 
 **Windows (Local):**
 ```bash
@@ -34,7 +57,7 @@ net start MongoDB
 **MongoDB Atlas:**
 - Already running in the cloud!
 
-## Step 4: Load Data
+## Step 5: Load Data
 
 ```bash
 python data_ingestion.py
@@ -42,7 +65,7 @@ python data_ingestion.py
 
 Wait for "Data ingestion complete!" message.
 
-## Step 5: Run the Agent
+## Step 6: Run the Agent
 
 ```bash
 python main.py
@@ -59,13 +82,19 @@ What movies has Tom Hanks been in?
 
 ## Troubleshooting
 
+**Ollama not running?**
+- Check if Ollama is running: `ollama list`
+- Restart Ollama service
+- Verify URL: `http://localhost:11434`
+
+**Model not found?**
+- Pull the model: `ollama pull mistral`
+- Check available models: `ollama list`
+- Update `OLLAMA_MODEL` in `.env`
+
 **MongoDB not running?**
 - Windows: `net start MongoDB`
 - Check Task Manager for `mongod.exe`
-
-**OpenAI API error?**
-- Verify your API key in `.env`
-- Check you have credits at platform.openai.com
 
 **No movies found?**
 - Run `python data_ingestion.py` again

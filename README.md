@@ -134,7 +134,7 @@ Creating indexes...
 Data ingestion complete!
 
 === Database Statistics ===
-Total movies: 1000
+Total movies: 5000
 Average IMDB rating: 7.95
 Year range: 1920 - 2020
 ```
@@ -185,14 +185,24 @@ python main.py
 ## 🛠️ Project Structure
 
 ```
-langchain/
-├── movies.csv                 # Dataset (5000 top IMDB movies)
+langchain_ollama/
+├── dataset/
+│   └── movies.csv             # Dataset (5000 top IMDB movies)
+├── Project_summary/
+│   ├── PROJECT_STRUCTURE.txt  # Detailed project structure documentation
+│   └── PROJECT_SUMMARY.md     # Project overview and summary
+├── testing/
+│   └── test_setup.py          # Environment verification script
+├── agent.py                   # LangChain ReAct agent implementation
 ├── data_ingestion.py          # Script to load data into MongoDB
-├── agent.py                   # LangChain agent implementation
 ├── main.py                    # Interactive CLI application
 ├── requirements.txt           # Python dependencies
 ├── .env.example               # Environment variables template
 ├── .env                       # Your configuration (create this)
+├── .gitignore                 # Git ignore rules
+├── LICENSE                    # Project license
+├── ARCHITECTURE.md            # System architecture documentation
+├── QUICKSTART.md              # Quick setup guide
 └── README.md                  # This file
 ```
 
@@ -205,9 +215,9 @@ langchain/
 - Stores structured documents in MongoDB
 - Creates indexes for efficient querying
 
-### 2. Movie Agent (`movie_agent.py`)
+### 2. Movie Agent (`agent.py`)
 
-**Tools Available:**
+**Tools Available:
 - `search_movies_by_title`: Search by movie title
 - `get_movies_by_director`: Find movies by director
 - `get_top_rated_movies`: Get highest-rated movies

@@ -21,11 +21,12 @@
                          │ Query
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                   movie_agent.py                             │
+│                     agent.py                                 │
 │                  (LangChain Agent)                           │
 │                                                              │
 │  ┌──────────────────────────────────────────────┐          │
-│  │         OpenAI GPT-3.5-turbo                 │          │
+│  │         Ollama (Local LLM)                   │          │
+│  │  (mistral/llama3.2/llama3.1/qwen2.5)        │          │
 │  │    (Intent Understanding & Planning)         │          │
 │  └──────────────────┬───────────────────────────┘          │
 │                     │                                        │
@@ -93,7 +94,7 @@ main.py (Receive input)
     ↓
 MovieAgent (LangChain)
     ↓
-OpenAI GPT (Understand intent)
+Ollama LLM (Understand intent)
     ↓
 Tool Selection (Choose appropriate database tool)
     ↓
@@ -109,9 +110,9 @@ main.py (Display to user)
 ## Key Design Patterns
 
 ### 1. Agent Pattern
-- **LangChain Agent**: Autonomous decision-making
+- **LangChain ReAct Agent**: Autonomous decision-making
 - **Tool-based Architecture**: Modular, extensible tools
-- **Function Calling**: GPT selects appropriate tools
+- **Function Calling**: LLM selects appropriate tools
 
 ### 2. Repository Pattern
 - **MovieDatabaseTools**: Abstracts database operations
@@ -128,13 +129,13 @@ main.py (Display to user)
 ### Core Technologies
 - **Python 3.8+**: Programming language
 - **LangChain**: Agent framework
-- **OpenAI GPT-3.5**: Language model
+- **Ollama**: Local LLM server (mistral, llama3.2, llama3.1, qwen2.5)
 - **MongoDB**: NoSQL database
 - **PyMongo**: MongoDB driver
 
 ### Key Libraries
 - `langchain`: Agent orchestration
-- `langchain-openai`: OpenAI integration
+- `langchain-ollama`: Ollama integration
 - `pymongo`: Database connectivity
 - `pandas`: Data processing
 - `python-dotenv`: Environment management
@@ -144,7 +145,8 @@ main.py (Display to user)
 ### Current Implementation
 - **Single-threaded**: One query at a time
 - **Local/Cloud MongoDB**: Flexible deployment
-- **Rate limits**: OpenAI API limits apply
+- **Local LLM**: No external API rate limits
+- **Ollama Server**: Runs locally (http://localhost:11434)
 
 ### Future Enhancements
 - **Caching**: Redis for frequent queries
@@ -165,7 +167,7 @@ main.py (Display to user)
 - **Authentication**: User authentication system
 - **Authorization**: Role-based access control
 - **Encryption**: TLS for MongoDB connections
-- **API key rotation**: Regular key updates
+- **Ollama Security**: Secure Ollama server access
 - **Rate limiting**: Prevent abuse
 - **Audit logging**: Track all queries
 
@@ -173,7 +175,7 @@ main.py (Display to user)
 
 ### Adding New Tools
 ```python
-# In movie_agent.py
+# In agent.py
 Tool(
     name="your_tool_name",
     func=self.db_tools.your_function,
@@ -196,12 +198,13 @@ class NewDataSource:
 
 ### Custom Agent Behavior
 ```python
-# Modify prompt in movie_agent.py
-self.prompt = ChatPromptTemplate.from_messages([
-    ("system", "Your custom system prompt"),
-    ("human", "{input}"),
-    MessagesPlaceholder(variable_name="agent_scratchpad")
-])
+# Modify prompt in agent.py
+template = """Your custom ReAct prompt template...
+
+Question: {input}
+Thought:{agent_scratchpad}"""
+
+self.prompt = PromptTemplate.from_template(template)
 ```
 
 ## Performance Metrics
@@ -209,7 +212,7 @@ self.prompt = ChatPromptTemplate.from_messages([
 ### Query Performance
 - **Simple queries**: < 1 second
 - **Complex aggregations**: 1-3 seconds
-- **Agent reasoning**: 2-5 seconds (OpenAI API)
+- **Agent reasoning**: 2-10 seconds (Ollama local inference)
 
 ### Optimization Strategies
 1. **Indexes**: Pre-created on common fields
@@ -221,7 +224,7 @@ self.prompt = ChatPromptTemplate.from_messages([
 
 ### Layers
 1. **MongoDB**: Connection and query errors
-2. **OpenAI API**: Rate limits, authentication
+2. **Ollama Server**: Connection, model availability
 3. **Agent**: Parsing and execution errors
 4. **User Interface**: Input validation
 

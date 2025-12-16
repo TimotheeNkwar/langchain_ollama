@@ -8,42 +8,27 @@ This file:
 - Sets up a LangChain ReAct (Reason + Act) agent that chooses the tools
 """
 
-# Import: AgentExecutor executes the agent + tools, create_react_agent builds a ReAct agent
+# AgentExecutor executes the agent + tools, create_react_agent builds a ReAct agent
 try:
     from langchain.agents import AgentExecutor, create_react_agent
 except ImportError:
     from langchain_core.agents import AgentExecutor
     from langchain.agents import create_react_agent
 
-# Import: ChatOllama is the LLM (model) accessible via Ollama (local server)
-from langchain_ollama import ChatOllama
+from langchain_ollama import ChatOllama  # LLM (model) accessible via Ollama (local server)
+from langchain_core.tools import Tool  # LangChain wrapper to declare functions usable by the agent
+from langchain import hub  # LangChain Hub (hosted prompts/tools), used here via hub.run(...)
+from pymongo import MongoClient  # Official MongoDB client for Python
+from dotenv import load_dotenv  # Load environment variables from .env file
+import os  # OS access (environment variables, etc.)
+import json  # JSON serialization for clean output
+from typing import List, Dict, Any  # Types for annotation (readability, IDE, type checking)
 
-# Import: Tool is a LangChain wrapper to declare functions usable by the agent
-from langchain_core.tools import Tool
-
-# Import: hub allows using LangChain Hub (hosted prompts/tools), used here via hub.run(...)
-from langchain import hub
-
-# Import : client officiel MongoDB pour Python
-from pymongo import MongoClient
-
-# Import : charge les variables d'environnement depuis un fichier .env (si présent)
-from dotenv import load_dotenv
-
-# Import : accès OS (variables d'env, etc.)
-import os
-
-# Import : sérialisation JSON pour afficher proprement les résultats
-import json
-
-# Import : types pour l'annotation (lisibilité, IDE, vérifications)
-from typing import List, Dict, Any
-
-# Charge automatiquement les variables définies dans un fichier ".env" (dans le dossier courant)
+# Automatically load variables defined in ".env" file (in current directory)
 load_dotenv()
 
-# Désactive (optionnel) le tracing LangSmith en forçant la variable d'environnement à "false"
-# (utile si tu ne veux pas envoyer de traces / ou éviter un warning)
+# Disable (optional) LangSmith tracing by forcing the environment variable to "false"
+# (useful if you don't want to send traces / or avoid a warning)
 os.environ["LANGCHAIN_TRACING_V2"] = "false"
 
 class MovieDatabaseTools:
@@ -286,12 +271,12 @@ class MovieAgent:
         Purpose: some models return inputs surrounded by quotes.
         We remove them to make the tools more robust.
         """
-        # Vérifie que text est bien une chaîne
+        # Check that text is indeed a string
         if isinstance(text, str):
-            # strip() enlève espaces; strip("'\"") enlève aussi guillemets simples/doubles en bord
+            # strip() removes spaces; strip("'\"") also removes single/double quotes from edges
             return text.strip().strip("'\"")
 
-        # Si ce n'est pas une str, on le renvoie tel quel
+        # If it's not a str, return it as is
         return text
 
     def __init__(self):
