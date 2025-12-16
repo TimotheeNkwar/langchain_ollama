@@ -1,6 +1,6 @@
 # 🎬 IMDB Movie AI Agent with MongoDB and LangChain
 
-An intelligent AI agent built with **LangChain** and **MongoDB** that can answer questions about the top 1000 IMDB movies. The agent uses Ollama (local LLM) to understand natural language queries and intelligently retrieves information from a MongoDB database.
+An intelligent AI agent built with **LangChain** and **MongoDB** that can answer questions about the top 5000 IMDB movies. The agent uses Ollama (local LLM) to understand natural language queries and intelligently retrieves information from a MongoDB database.
 
 ## 🌟 Features
 
@@ -103,7 +103,7 @@ MONGODB_URI=mongodb://localhost:27017/
 # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/
 
 # Database configuration
-MONGODB_DATABASE=imdb_movies
+MONGODB_DATABASE=langchain_db
 MONGODB_COLLECTION=movies
 ```
 
@@ -127,9 +127,9 @@ Expected output:
 Connecting to MongoDB...
 Clearing existing data...
 Reading CSV file...
-Loaded 1000 movies from CSV
-Inserting 1000 movies into MongoDB...
-Successfully inserted 1000 movies
+Loaded 5000 movies from CSV
+Inserting 5000 movies into MongoDB...
+Successfully inserted 5000 movies
 Creating indexes...
 Data ingestion complete!
 
@@ -186,7 +186,7 @@ python main.py
 
 ```
 langchain/
-├── imdb_top_1000.csv          # Dataset (1000 top IMDB movies)
+├── movies.csv                 # Dataset (5000 top IMDB movies)
 ├── data_ingestion.py          # Script to load data into MongoDB
 ├── agent.py                   # LangChain agent implementation
 ├── main.py                    # Interactive CLI application
