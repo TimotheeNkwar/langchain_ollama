@@ -1,2 +1,381 @@
-# langchain_ollama
+# 🎬 IMDB Movie AI Agent with MongoDB and LangChain
 
+An intelligent AI agent built with **LangChain** and **MongoDB** that can answer questions about the top 1000 IMDB movies. The agent uses Ollama (local LLM) to understand natural language queries and intelligently retrieves information from a MongoDB database.
+
+## 🌟 Features
+
+- **Natural Language Queries**: Ask questions in plain English
+- **Intelligent Search**: Search movies by title, director, actor, genre, year, and more
+- **Smart Recommendations**: Get movie recommendations based on preferences
+- **Statistical Analysis**: Get insights about the movie database
+- **MongoDB Integration**: Efficient data storage and retrieval
+- **LangChain Agent**: Autonomous decision-making for complex queries
+
+## 🏗️ Architecture
+
+```
+User Query → LangChain Agent → Tool Selection → MongoDB Query → Response
+                ↓
+          Ollama (Local LLM)
+```
+
+The agent uses LangChain's ReAct agent capabilities to:
+1. Understand user intent
+2. Select appropriate database tools
+3. Query MongoDB efficiently
+4. Format responses in a user-friendly way
+
+## 📋 Prerequisites
+
+- Python 3.8 or higher
+- MongoDB (local installation or MongoDB Atlas)
+- Ollama installed and running locally
+
+## 🚀 Installation
+
+### 1. Clone or Navigate to Project Directory
+
+```bash
+cd c:\Users\timot\Desktop\langchain
+```
+
+### 2. Install MongoDB
+
+**Option A: Local MongoDB (Windows)**
+- Download from [MongoDB Community Server](https://www.mongodb.com/try/download/community)
+- Install and start the MongoDB service
+- Default connection: `mongodb://localhost:27017/`
+
+**Option B: MongoDB Atlas (Cloud)**
+- Sign up at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+- Create a free cluster
+- Get your connection string (format: `mongodb+srv://username:password@cluster.mongodb.net/`)
+
+### 3. Install Ollama
+
+**Download and Install Ollama:**
+- Visit [Ollama.ai](https://ollama.ai/)
+- Download and install Ollama for Windows
+- Start Ollama (it runs as a background service)
+
+**Pull a Model:**
+```bash
+# Pull one of the supported models
+ollama pull mistral
+# or
+ollama pull llama3.2
+# or
+ollama pull qwen2.5
+```
+
+Verify Ollama is running:
+```bash
+ollama list
+```
+
+### 4. Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 5. Configure Environment Variables
+
+Create a `.env` file in the project root:
+
+```bash
+# Copy the example file
+copy .env.example .env
+```
+
+Edit `.env` and add your configuration:
+
+```env
+# Ollama Configuration
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=mistral  # or llama3.2, llama3.1, qwen2.5
+
+# MongoDB Connection (choose one)
+# For local MongoDB:
+MONGODB_URI=mongodb://localhost:27017/
+
+# For MongoDB Atlas:
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/
+
+# Database configuration
+MONGODB_DATABASE=imdb_movies
+MONGODB_COLLECTION=movies
+```
+
+### 6. Load Data into MongoDB
+
+Run the data ingestion script:
+
+```bash
+python data_ingestion.py
+```
+
+This will:
+- Connect to MongoDB
+- Load the IMDB CSV data
+- Clean and structure the data
+- Create indexes for optimal performance
+- Display database statistics
+
+Expected output:
+```
+Connecting to MongoDB...
+Clearing existing data...
+Reading CSV file...
+Loaded 1000 movies from CSV
+Inserting 1000 movies into MongoDB...
+Successfully inserted 1000 movies
+Creating indexes...
+Data ingestion complete!
+
+=== Database Statistics ===
+Total movies: 1000
+Average IMDB rating: 7.95
+Year range: 1920 - 2020
+```
+
+## 🎮 Usage
+
+### Start the Interactive Agent
+
+```bash
+python main.py
+```
+
+### Example Queries
+
+**Search & Discovery:**
+```
+🎬 You: What are the top 5 rated movies?
+🎬 You: Find movies about space or sci-fi
+🎬 You: Show me Christopher Nolan movies
+```
+
+**Actor & Director Queries:**
+```
+🎬 You: What movies has Leonardo DiCaprio been in?
+🎬 You: Show me all Quentin Tarantino films
+🎬 You: Find movies with Tom Hanks
+```
+
+**Time-based Queries:**
+```
+🎬 You: What are the best movies from the 1990s?
+🎬 You: Show me movies between 2000 and 2010
+```
+
+**Statistics & Analysis:**
+```
+🎬 You: What are the database statistics?
+🎬 You: Who are the most prolific directors?
+```
+
+**Recommendations:**
+```
+🎬 You: Recommend a thriller movie
+🎬 You: I want to watch something like Inception
+🎬 You: Suggest a classic movie
+```
+
+## 🛠️ Project Structure
+
+```
+langchain/
+├── imdb_top_1000.csv          # Dataset (1000 top IMDB movies)
+├── data_ingestion.py          # Script to load data into MongoDB
+├── agent.py                   # LangChain agent implementation
+├── main.py                    # Interactive CLI application
+├── requirements.txt           # Python dependencies
+├── .env.example               # Environment variables template
+├── .env                       # Your configuration (create this)
+└── README.md                  # This file
+```
+
+## 🔧 How It Works
+
+### 1. Data Ingestion (`data_ingestion.py`)
+
+- Reads the IMDB CSV file
+- Cleans and transforms data
+- Stores structured documents in MongoDB
+- Creates indexes for efficient querying
+
+### 2. Movie Agent (`movie_agent.py`)
+
+**Tools Available:**
+- `search_movies_by_title`: Search by movie title
+- `get_movies_by_director`: Find movies by director
+- `get_top_rated_movies`: Get highest-rated movies
+- `get_movies_by_genre`: Filter by genre
+- `get_movies_by_year_range`: Filter by release year
+- `get_movies_with_actor`: Find movies with specific actors
+- `get_movie_statistics`: Database analytics
+- `advanced_search`: Complex multi-field search
+
+**Agent Workflow:**
+1. Receives natural language query
+2. Uses Ollama LLM (local model) to understand intent
+3. Selects appropriate tool(s) using ReAct reasoning
+4. Executes MongoDB queries
+5. Formats and returns results
+
+### 3. Main Application (`main.py`)
+
+- Provides interactive CLI interface
+- Handles user input/output
+- Manages agent lifecycle
+- Error handling and user guidance
+
+## 📊 Database Schema
+
+Each movie document in MongoDB contains:
+
+```json
+{
+  "title": "The Shawshank Redemption",
+  "year": 1994,
+  "certificate": "A",
+  "runtime_minutes": 142,
+  "genre": "Drama",
+  "imdb_rating": 9.3,
+  "overview": "Two imprisoned men bond over...",
+  "meta_score": 80,
+  "director": "Frank Darabont",
+  "stars": ["Tim Robbins", "Morgan Freeman", ...],
+  "votes": 2343110,
+  "gross": 28341469,
+  "poster_link": "https://...",
+  "searchable_text": "Combined text for search"
+}
+```
+
+## 🔍 Advanced Features
+
+### Custom Queries
+
+You can extend the agent by adding new tools in `movie_agent.py`:
+
+```python
+Tool(
+    name="your_custom_tool",
+    func=self.db_tools.your_custom_function,
+    description="Description for the AI to understand when to use this tool"
+)
+```
+
+### MongoDB Aggregation
+
+The agent uses MongoDB's aggregation pipeline for complex queries:
+
+```python
+self.collection.aggregate([
+    {'$group': {'_id': '$director', 'count': {'$sum': 1}}},
+    {'$sort': {'count': -1}},
+    {'$limit': 10}
+])
+```
+
+## 🐛 Troubleshooting
+
+### MongoDB Connection Error
+
+**Problem:** `pymongo.errors.ServerSelectionTimeoutError`
+
+**Solutions:**
+- Ensure MongoDB is running: `net start MongoDB` (Windows)
+- Check connection string in `.env`
+- For Atlas: Whitelist your IP address
+
+### Ollama Connection Error
+
+**Problem:** `Unable to initialize ChatOllama with available models`
+
+**Solutions:**
+- Ensure Ollama is installed and running
+- Check if Ollama service is active: `ollama list`
+- Verify the model is pulled: `ollama pull mistral`
+- Check OLLAMA_BASE_URL in `.env` (default: `http://localhost:11434`)
+- Try restarting Ollama
+
+### No Movies Found
+
+**Problem:** Agent returns "No movies found"
+
+**Solutions:**
+- Run `python data_ingestion.py` to load data
+- Check MongoDB connection
+- Verify database and collection names in `.env`
+
+### Import Errors
+
+**Problem:** `ModuleNotFoundError`
+
+**Solutions:**
+```bash
+pip install -r requirements.txt --upgrade
+```
+
+## 📈 Performance Tips
+
+1. **Indexes**: The ingestion script creates indexes automatically
+2. **Limit Results**: Tools limit results to prevent overwhelming responses
+3. **Connection Pooling**: MongoDB client handles connection pooling
+4. **Caching**: Consider implementing caching for frequent queries
+
+## 🔐 Security Best Practices
+
+- Never commit `.env` file to version control
+- Use environment variables for all configuration
+- For production, use MongoDB Atlas with authentication
+- Ollama runs locally - no API keys needed
+- Use read-only database users when possible
+- Keep Ollama updated to the latest version
+
+## 🚀 Next Steps
+
+**Enhancements you can add:**
+
+1. **Vector Search**: Add embeddings for semantic search
+2. **Web Interface**: Build a Flask/FastAPI web UI
+3. **More Data**: Expand with reviews, ratings, streaming availability
+4. **Visualization**: Add charts and graphs for statistics
+5. **Recommendations**: Implement collaborative filtering
+6. **Multi-language**: Add support for multiple languages
+
+## 📚 Resources
+
+- [LangChain Documentation](https://python.langchain.com/)
+- [MongoDB Python Driver](https://pymongo.readthedocs.io/)
+- [Ollama Documentation](https://ollama.ai/)
+- [Ollama Python Library](https://github.com/ollama/ollama-python)
+- [IMDB Dataset](https://www.kaggle.com/datasets/harshitshankhdhar/imdb-dataset-of-top-1000-movies-and-tv-shows)
+
+## 📝 License
+
+This project is for educational purposes. The IMDB dataset is used under fair use for learning and demonstration.
+
+## 🤝 Contributing
+
+Feel free to fork, modify, and enhance this project! Some ideas:
+- Add more sophisticated NLP features
+- Implement user preferences and history
+- Add movie recommendation algorithms
+- Create a web dashboard
+
+## 💡 Tips for Best Results
+
+1. **Be Specific**: "Show me sci-fi movies from the 2000s" works better than "show movies"
+2. **Use Natural Language**: The agent understands conversational queries
+3. **Combine Criteria**: "Find highly-rated action movies with Tom Cruise"
+4. **Ask for Statistics**: "What's the average rating of Nolan's movies?"
+
+---
+
+**Built with ❤️ using LangChain, MongoDB, and Ollama**
+
+Happy movie hunting! 🎬🍿
