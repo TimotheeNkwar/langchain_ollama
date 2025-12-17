@@ -1,6 +1,6 @@
 # 🚀 Quick Start Guide
 
-Get your TMDB Movie AI Agent running in 5 minutes!
+Get your TMDB Movie AI Agent running in 10 minutes!
 
 ## Step 1: Install Dependencies
 
@@ -63,8 +63,8 @@ net start MongoDB
 python data_ingestion.py
 ```
 
-This will load 5,000 movies from the TMDB dataset in batches.
-Wait for "Data ingestion complete!" message (~30 seconds).
+This will load 50,000 movies from the TMDB dataset in batches.
+Wait for "Data ingestion complete!" message (~2-3 minutes).
 
 ## Step 6: Run the Agent
 
@@ -105,10 +105,10 @@ Find sci-fi movies with high ratings
 - Verify dataset file exists: `dataset/TMDB_movie_dataset_v11.csv`
 
 **Data ingestion taking too long?**
-- Should only take ~30 seconds for 5,000 movies
+- Normal for 50,000 movies (~2-3 minutes)
 - Progress is shown during insertion
 - Don't interrupt the process
 
 ---
 
-That's it! You're ready to explore 5,000 movies with AI! 🎬
+That's it! You're ready to explore 50,000 movies with AI! 🎬

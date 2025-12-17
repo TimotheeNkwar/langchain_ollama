@@ -2,7 +2,7 @@
 
 ## What You've Built
 
-A complete AI Agent application that intelligently queries and analyzes 5,000 movies from The Movie Database (TMDB) using:
+A complete AI Agent application that intelligently queries and analyzes 50,000 movies from The Movie Database (TMDB) using:
 - **LangChain** for agent orchestration
 - **MongoDB** for data storage
 - **Ollama (Local LLM)** for natural language understanding
@@ -28,8 +28,9 @@ A complete AI Agent application that intelligently queries and analyzes 5,000 mo
 
 ### Data Files
 12. **`movies.csv`** - Original IMDB dataset (deprecated)
-13. **`TMDB_movie_dataset_5k.csv`** - TMDB dataset with 5,000 movies
-14. **`data.ipynb`** - Notebook to create dataset subsets
+13. **`TMDB_movie_dataset_v11.csv`** - TMDB dataset with 50,000 movies
+14. **`TMDB_movie_dataset_5k.csv`** - TMDB subset with 5,000 movies
+15. **`data.ipynb`** - Notebook to create dataset subsets
 
 ## Key Features Implemented
 
@@ -50,11 +51,11 @@ A complete AI Agent application that intelligently queries and analyzes 5,000 mo
 8. **advanced_search** - Multi-field semantic search
 
 ### 💾 Database Features
-- Structured document storage (5,000 movies)
+- Structured document storage (50,000 movies)
 - Optimized indexes (title, year, vote_average, tmdb_id, imdb_id, genres)
 - Efficient aggregation queries
 - Clean data transformation
-- Batch insertion
+- Batch insertion for large datasets
 
 ### 🎨 User Experience
 - Interactive CLI with colored output
@@ -246,10 +247,10 @@ By building this project, you've learned:
 
 - **Lines of Code**: ~500+ lines
 - **Number of Tools**: 8 specialized tools
-- **Database Records**: 5,000 movies
+- **Database Records**: 50,000 movies
 - **Documentation**: 4 comprehensive guides
-- **Setup Time**: ~5 minutes (including data ingestion)
-- **Data Ingestion Time**: ~30 seconds (batch processing)
+- **Setup Time**: ~10 minutes (including data ingestion)
+- **Data Ingestion Time**: ~2-3 minutes (batch processing)
 - **Query Response Time**: 2-5 seconds
 
 ## Success Metrics

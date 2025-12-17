@@ -1,5 +1,5 @@
 """
-Data Ingestion Script for TMDB Movie Dataset (5,000 movies)
+Data Ingestion Script for TMDB Movie Dataset
 Loads TMDB CSV data into MongoDB with proper data cleaning and structuring
 """
 
@@ -64,9 +64,9 @@ def load_data_to_mongodb():
     print(f"Clearing existing data in {database_name}.{collection_name}")
     collection.delete_many({})
 
-    # Read CSV (5,000 movies)
+    # Read CSV (limit to 50,000 movies)
     print("Reading CSV file...")
-    df = pd.read_csv('dataset/TMDB_movie_dataset_5k.csv')
+    df = pd.read_csv('dataset/TMDB_movie_dataset_v11.csv', nrows=50000)
 
     print(f"Loaded {len(df)} movies from CSV")
 

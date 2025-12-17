@@ -5,7 +5,8 @@ langchain_ollama/
 │
 ├── 📁 dataset/
 │   ├── movies.csv                     (438 KB) - Original IMDB dataset (deprecated)
-│   ├── TMDB_movie_dataset_5k.csv      (3.5 MB) - TMDB 5,000 movies dataset
+│   ├── TMDB_movie_dataset_v11.csv     (150+ MB) - TMDB 50,000 movies dataset
+│   ├── TMDB_movie_dataset_5k.csv      (3.5 MB) - TMDB 5,000 movies subset
 │   └── data.ipynb                     - Notebook to create subsets
 │
 ├── 📁 Project_summary/
@@ -31,7 +32,7 @@ langchain_ollama/
     ├── ARCHITECTURE.md                (10.1 KB) - System architecture details
     └── LICENSE                        (1.1 KB) - Project license
 
-TOTAL: 16 files across 3 folders, ~5 MB
+TOTAL: 17 files across 3 folders, ~150+ MB
 
 
 FILE DESCRIPTIONS
@@ -57,9 +58,9 @@ agent.py
   → Core AI logic
 
 data_ingestion.py
-  • TMDB CSV to MongoDB loader (5,000 movies)
+  • TMDB CSV to MongoDB loader (50,000 movies)
   • Data cleaning and transformation
-  • Batch insertion
+  • Batch insertion for large datasets
   • Index creation
   • Database statistics
   → Run once: python data_ingestion.py
@@ -200,7 +201,7 @@ KEY COMPONENTS
    • advanced_search
 
 3. Data Layer (MongoDB)
-   • 5,000 movie documents
+   • 50,000 movie documents
    • 6 indexes (title, year, vote_average, tmdb_id, imdb_id, genres)
    • Aggregation pipelines
    • Batch processing
@@ -255,11 +256,11 @@ PROJECT STATISTICS
 
 Lines of Code:     ~500+ lines
 Number of Tools:   9 specialized tools (including hub_search_movies)
-Database Records:  5,000 movies
+Database Records:  50,000 movies
 Documentation:     5 comprehensive guides
-Setup Time:        ~5 minutes (including Ollama)
+Setup Time:        ~10 minutes (including Ollama)
 Query Time:        2-10 seconds average (local inference)
-Data Ingestion:    ~30 seconds (batch processing)
+Data Ingestion:    ~2-3 minutes (batch processing)
 
 
 NEXT STEPS
