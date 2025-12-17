@@ -43,3 +43,7 @@ Thumbs.db
 # Database
 *.db
 *.sqlite
+
+# Large dataset files
+dataset/TMDB_movie_dataset_v11.csv
+dataset/*.csv

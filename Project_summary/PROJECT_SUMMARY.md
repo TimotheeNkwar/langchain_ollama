@@ -1,8 +1,8 @@
-# 🎬 Project Summary: IMDB Movie AI Agent
+# 🎬 Project Summary: TMDB Movie AI Agent
 
 ## What You've Built
 
-A complete AI Agent application that intelligently queries and analyzes the IMDB Top 1000 movies dataset using:
+A complete AI Agent application that intelligently queries and analyzes 50,000 movies from The Movie Database (TMDB) using:
 - **LangChain** for agent orchestration
 - **MongoDB** for data storage
 - **Ollama (Local LLM)** for natural language understanding
@@ -26,8 +26,9 @@ A complete AI Agent application that intelligently queries and analyzes the IMDB
 10. **`ARCHITECTURE.md`** - System architecture and design patterns
 11. **`PROJECT_SUMMARY.md`** - This file
 
-### Data File
-12. **`imdb_top_1000.csv`** - Dataset with 1000 top-rated movies
+### Data Files
+12. **`movies.csv`** - Original IMDB dataset (deprecated)
+13. **`TMDB_movie_dataset_v11.csv`** - TMDB dataset with 50,000 movies
 
 ## Key Features Implemented
 
@@ -48,10 +49,11 @@ A complete AI Agent application that intelligently queries and analyzes the IMDB
 8. **advanced_search** - Multi-field semantic search
 
 ### 💾 Database Features
-- Structured document storage
-- Optimized indexes (title, year, rating, director, genre)
+- Structured document storage (50,000 movies)
+- Optimized indexes (title, year, vote_average, tmdb_id, imdb_id, genres)
 - Efficient aggregation queries
 - Clean data transformation
+- Batch insertion for large datasets
 
 ### 🎨 User Experience
 - Interactive CLI with colored output
@@ -83,10 +85,10 @@ python main.py
 
 ```
 🎬 You: What are the top 5 rated movies?
-🤖 Agent: Here are the top 5 rated movies:
-1. The Shawshank Redemption (1994) - 9.3
-2. The Godfather (1972) - 9.2
-3. The Dark Knight (2008) - 9.0
+🤖 Agent: Here are the top 5 rated movies from TMDB:
+1. The Shawshank Redemption (1994) - 8.7
+2. The Godfather (1972) - 8.7
+3. The Dark Knight (2008) - 8.5
 ...
 
 🎬 You: Show me Christopher Nolan movies
@@ -113,16 +115,18 @@ python main.py
 ### Technologies Used
 - **Python 3.8+**: Core language
 - **LangChain 0.1.0**: Agent framework
-- **Ollama**: Local LLM (Mistral, Llama3, or Qwen2.5)
-- **MongoDB**: NoSQL database
+- **Ollama**: Local LLM (Mistral, Llama3.2, or Qwen2.5)
+- **MongoDB**: NoSQL database (local or Atlas)
 - **PyMongo**: Database driver
-- **Pandas**: Data processing
+- **Pandas**: Data processing (CSV to MongoDB)
 
 ### Performance Optimizations
 - Database indexes on frequently queried fields
 - Result set limits to prevent overwhelming responses
 - Connection pooling for database efficiency
 - Efficient aggregation pipelines
+- Batch insertion (1000 movies per batch)
+- Progress tracking for large data loads
 
 ## What Makes This Special
 
@@ -165,6 +169,7 @@ By building this project, you've learned:
 - ✅ CRUD operations
 - ✅ Indexing strategies
 - ✅ Aggregation pipelines
+- ✅ Batch insertion for large datasets
 
 ### Software Engineering
 - ✅ Clean architecture
@@ -240,9 +245,10 @@ By building this project, you've learned:
 
 - **Lines of Code**: ~500+ lines
 - **Number of Tools**: 8 specialized tools
-- **Database Records**: 1000 movies
+- **Database Records**: 50,000 movies
 - **Documentation**: 4 comprehensive guides
-- **Setup Time**: ~5 minutes
+- **Setup Time**: ~10 minutes (including data ingestion)
+- **Data Ingestion Time**: ~2-3 minutes (batch processing)
 - **Query Response Time**: 2-5 seconds
 
 ## Success Metrics
