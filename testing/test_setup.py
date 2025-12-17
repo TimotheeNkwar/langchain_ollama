@@ -160,12 +160,12 @@ def check_data():
 
 def check_csv_file():
     """Check if CSV file exists"""
-    if os.path.exists('dataset/TMDB_movie_dataset_v11.csv'):
-        return print_status("CSV File", True, "TMDB dataset found (50,000 movies)")
+    if os.path.exists('dataset/TMDB_movie_dataset_5k.csv'):
+        return print_status("CSV File", True, "TMDB dataset found (5,000 movies)")
     elif os.path.exists('dataset/movies.csv'):
         return print_status("CSV File", True, "Legacy IMDB dataset found (deprecated)")
     else:
-        return print_status("CSV File", False, "TMDB_movie_dataset_v11.csv not found in dataset/")
+        return print_status("CSV File", False, "TMDB_movie_dataset_5k.csv not found in dataset/")
 
 def main():
     """Run all checks"""
