@@ -43,3 +43,9 @@ Thumbs.db
 # Database
 *.db
 *.sqlite
+
+# Large dataset files (exclude original large file)
+dataset/TMDB_movie_dataset_v11.csv
+# Keep the 5k version
+!dataset/TMDB_movie_dataset_5k.csv
+!dataset/movies.csv

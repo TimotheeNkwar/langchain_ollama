@@ -1,6 +1,6 @@
-# 🎬 IMDB Movie AI Agent with MongoDB and LangChain
+# 🎬 TMDB Movie AI Agent with MongoDB and LangChain
 
-An intelligent AI agent built with **LangChain** and **MongoDB** that can answer questions about the top 5000 IMDB movies. The agent uses Ollama (local LLM) to understand natural language queries and intelligently retrieves information from a MongoDB database.
+An intelligent AI agent built with **LangChain** and **MongoDB** that can answer questions about 50,000 movies from The Movie Database (TMDB). The agent uses Ollama (local LLM) to understand natural language queries and intelligently retrieves information from a MongoDB database.
 
 ## 🌟 Features
 
@@ -127,16 +127,19 @@ Expected output:
 Connecting to MongoDB...
 Clearing existing data...
 Reading CSV file...
-Loaded 5000 movies from CSV
-Inserting 5000 movies into MongoDB...
-Successfully inserted 5000 movies
+Loaded 50000 movies from CSV
+Inserting 50000 movies into MongoDB in batches...
+Progress: 1000/50000 movies inserted (2.0%)
+...
+Progress: 50000/50000 movies inserted (100.0%)
+Successfully inserted 50000 movies
 Creating indexes...
 Data ingestion complete!
 
 === Database Statistics ===
-Total movies: 5000
-Average IMDB rating: 7.95
-Year range: 1920 - 2020
+Total movies: 50000
+Average TMDB rating: 6.2
+Year range: 1874 - 2025
 ```
 
 ## 🎮 Usage
@@ -151,9 +154,10 @@ python main.py
 
 **Search & Discovery:**
 ```
-🎬 You: What are the top 5 rated movies?
+🎬 You: What are the top 10 rated movies?
 🎬 You: Find movies about space or sci-fi
 🎬 You: Show me Christopher Nolan movies
+🎬 You: Search for Marvel movies
 ```
 
 **Actor & Director Queries:**
@@ -187,7 +191,10 @@ python main.py
 ```
 langchain_ollama/
 ├── dataset/
-│   └── movies.csv             # Dataset (5000 top IMDB movies)
+│   ├── movies.csv             # Original IMDB dataset (deprecated)
+│   ├── TMDB_movie_dataset_v11.csv  # TMDB dataset (50,000 movies)
+│   ├── TMDB_movie_dataset_5k.csv   # TMDB subset (5,000 movies)
+│   └── data.ipynb            # Notebook to create subsets
 ├── Project_summary/
 │   ├── PROJECT_STRUCTURE.txt  # Detailed project structure documentation
 │   └── PROJECT_SUMMARY.md     # Project overview and summary
@@ -210,10 +217,10 @@ langchain_ollama/
 
 ### 1. Data Ingestion (`data_ingestion.py`)
 
-- Reads the IMDB CSV file
-- Cleans and transforms data
-- Stores structured documents in MongoDB
-- Creates indexes for efficient querying
+- Reads the TMDB CSV file (limited to 50,000 movies)
+- Cleans and transforms data with proper type conversion
+- Stores structured documents in MongoDB using batch insertion
+- Creates indexes for efficient querying on key fields
 
 ### 2. Movie Agent (`agent.py`)
 
@@ -247,19 +254,31 @@ Each movie document in MongoDB contains:
 
 ```json
 {
+  "tmdb_id": 278,
+  "imdb_id": "tt0111161",
   "title": "The Shawshank Redemption",
+  "original_title": "The Shawshank Redemption",
   "year": 1994,
-  "certificate": "A",
+  "release_date": "1994-09-23",
   "runtime_minutes": 142,
-  "genre": "Drama",
-  "imdb_rating": 9.3,
+  "genres": "Drama, Crime",
+  "vote_average": 8.7,
+  "vote_count": 26000,
   "overview": "Two imprisoned men bond over...",
-  "meta_score": 80,
-  "director": "Frank Darabont",
-  "stars": ["Tim Robbins", "Morgan Freeman", ...],
-  "votes": 2343110,
-  "gross": 28341469,
-  "poster_link": "https://...",
+  "tagline": "Fear can hold you prisoner. Hope can set you free.",
+  "poster_path": "/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg",
+  "backdrop_path": "/iNh3BivHyg5sQRPP1KOkzguEX0H.jpg",
+  "popularity": 98.5,
+  "budget": 25000000,
+  "revenue": 28341469,
+  "status": "Released",
+  "original_language": "en",
+  "production_companies": "Castle Rock Entertainment, Columbia Pictures",
+  "production_countries": "United States of America",
+  "spoken_languages": "English",
+  "keywords": "prison, friendship, hope, redemption",
+  "homepage": "https://...",
+  "adult": false,
   "searchable_text": "Combined text for search"
 }
 ```
@@ -363,11 +382,11 @@ pip install -r requirements.txt --upgrade
 - [MongoDB Python Driver](https://pymongo.readthedocs.io/)
 - [Ollama Documentation](https://ollama.ai/)
 - [Ollama Python Library](https://github.com/ollama/ollama-python)
-- [IMDB Dataset](https://www.kaggle.com/datasets/harshitshankhdhar/imdb-dataset-of-top-1000-movies-and-tv-shows)
+- [TMDB Dataset](https://www.kaggle.com/datasets/asaniczka/tmdb-movies-dataset-2023-930k-movies)
 
 ## 📝 License
 
-This project is for educational purposes. The IMDB dataset is used under fair use for learning and demonstration.
+This project is for educational purposes. The TMDB dataset is used under fair use for learning and demonstration.
 
 ## 🤝 Contributing
 

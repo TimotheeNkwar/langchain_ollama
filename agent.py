@@ -63,6 +63,7 @@ class MovieDatabaseTools:
                 {"title": {"$regex": title, "$options": "i"}},
                 {"_id": 0},
             )
+            movies = list(cursor)
 
             if not movies:
                 return f"No movies found matching '{title}'"
@@ -85,6 +86,7 @@ class MovieDatabaseTools:
                 {"director": {"$regex": director, "$options": "i"}},
                 {"_id": 0, "title": 1, "year": 1, "imdb_rating": 1, "genre": 1},
             )
+            movies = list(cursor)
 
             if not movies:
                 return f"No movies found for director '{director}'"
@@ -110,6 +112,7 @@ class MovieDatabaseTools:
                 {},
                 {"_id": 0, "title": 1, "year": 1, "imdb_rating": 1, "director": 1, "genre": 1},
             )
+            movies = list(cursor.sort("imdb_rating", -1).limit(limit))
 
             return json.dumps(movies, indent=2, default=str)
         except Exception as e:
@@ -128,6 +131,7 @@ class MovieDatabaseTools:
                 {"genre": {"$regex": genre, "$options": "i"}},
                 {"_id": 0, "title": 1, "year": 1, "imdb_rating": 1, "genre": 1, "director": 1},
             )
+            movies = list(cursor)
 
             if not movies:
                 return f"No movies found for genre '{genre}'"
@@ -150,6 +154,7 @@ class MovieDatabaseTools:
                 {"year": {"$gte": int(start_year), "$lte": int(end_year)}},
                 {"_id": 0, "title": 1, "year": 1, "imdb_rating": 1, "director": 1},
             )
+            movies = list(cursor)
 
             if not movies:
                 return f"No movies found between {start_year} and {end_year}"
@@ -172,6 +177,7 @@ class MovieDatabaseTools:
                 {"stars": {"$regex": actor, "$options": "i"}},
                 {"_id": 0, "title": 1, "year": 1, "imdb_rating": 1, "stars": 1, "director": 1},
             )
+            movies = list(cursor)
 
             if not movies:
                 return f"No movies found with actor '{actor}'"

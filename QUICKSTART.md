@@ -1,6 +1,6 @@
 # 🚀 Quick Start Guide
 
-Get your AI Movie Agent running in 5 minutes!
+Get your TMDB Movie AI Agent running in 10 minutes!
 
 ## Step 1: Install Dependencies
 
@@ -63,7 +63,8 @@ net start MongoDB
 python data_ingestion.py
 ```
 
-Wait for "Data ingestion complete!" message.
+This will load 50,000 movies from the TMDB dataset in batches.
+Wait for "Data ingestion complete!" message (~2-3 minutes).
 
 ## Step 6: Run the Agent
 
@@ -74,10 +75,12 @@ python main.py
 ## Try These Queries
 
 ```
-What are the top 5 rated movies?
+What are the top 10 rated movies?
 Show me Christopher Nolan movies
 Find action movies from the 2000s
 What movies has Tom Hanks been in?
+Search for Marvel movies
+Find sci-fi movies with high ratings
 ```
 
 ## Troubleshooting
@@ -98,7 +101,14 @@ What movies has Tom Hanks been in?
 
 **No movies found?**
 - Run `python data_ingestion.py` again
+- Check MongoDB connection
+- Verify dataset file exists: `dataset/TMDB_movie_dataset_v11.csv`
+
+**Data ingestion taking too long?**
+- Normal for 50,000 movies (~2-3 minutes)
+- Progress is shown during insertion
+- Don't interrupt the process
 
 ---
 
-That's it! You're ready to explore movies with AI! 🎬
+That's it! You're ready to explore 50,000 movies with AI! 🎬

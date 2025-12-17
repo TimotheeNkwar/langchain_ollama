@@ -147,8 +147,11 @@ def check_data():
             print_status("Data Loaded", False, "No movies in database")
             print("   Run: python data_ingestion.py")
             return False
+        elif count < 10000:
+            print_status("Data Loaded", True, f"{count:,} movies in database (partial load)")
+            return True
         else:
-            print_status("Data Loaded", True, f"{count} movies in database")
+            print_status("Data Loaded", True, f"{count:,} movies in database")
             return True
             
     except Exception as e:
@@ -157,15 +160,19 @@ def check_data():
 
 def check_csv_file():
     """Check if CSV file exists"""
-    if os.path.exists('movies.csv'):
-        return print_status("CSV File", True, "Found (5000 movies)")
+    if os.path.exists('dataset/TMDB_movie_dataset_v11.csv'):
+        return print_status("CSV File", True, "TMDB dataset found (50,000 movies)")
+    elif os.path.exists('dataset/TMDB_movie_dataset_5k.csv'):
+        return print_status("CSV File", True, "TMDB subset found (5,000 movies)")
+    elif os.path.exists('dataset/movies.csv'):
+        return print_status("CSV File", True, "Legacy IMDB dataset found (deprecated)")
     else:
-        return print_status("CSV File", False, "movies.csv not found")
+        return print_status("CSV File", False, "TMDB_movie_dataset_v11.csv not found in dataset/")
 
 def main():
     """Run all checks"""
     print("="*60)
-    print("🔍 IMDB Movie AI Agent - Setup Verification")
+    print("🔍 TMDB Movie AI Agent - Setup Verification")
     print("="*60)
     print()
     

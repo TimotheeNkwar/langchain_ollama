@@ -1,10 +1,13 @@
-IMDB Movie AI Agent - Project Structure
+TMDB Movie AI Agent - Project Structure
 =====================================
 
 langchain_ollama/
 │
 ├── 📁 dataset/
-│   └── movies.csv                     (438 KB) - IMDB Top 5000 movies dataset
+│   ├── movies.csv                     (438 KB) - Original IMDB dataset (deprecated)
+│   ├── TMDB_movie_dataset_v11.csv     (150+ MB) - TMDB 50,000 movies dataset
+│   ├── TMDB_movie_dataset_5k.csv      (3.5 MB) - TMDB 5,000 movies subset
+│   └── data.ipynb                     - Notebook to create subsets
 │
 ├── 📁 Project_summary/
 │   ├── PROJECT_STRUCTURE.txt          (This file) - Visual project tree
@@ -29,7 +32,7 @@ langchain_ollama/
     ├── ARCHITECTURE.md                (10.1 KB) - System architecture details
     └── LICENSE                        (1.1 KB) - Project license
 
-TOTAL: 14 files across 3 folders, ~493 KB
+TOTAL: 17 files across 3 folders, ~150+ MB
 
 
 FILE DESCRIPTIONS
@@ -55,8 +58,9 @@ agent.py
   → Core AI logic
 
 data_ingestion.py
-  • CSV to MongoDB loader
+  • TMDB CSV to MongoDB loader (50,000 movies)
   • Data cleaning and transformation
+  • Batch insertion for large datasets
   • Index creation
   • Database statistics
   → Run once: python data_ingestion.py
@@ -82,11 +86,11 @@ requirements.txt
 
 .env.example
   Template for environment variables:
-  • OLLAMA_BASE_URL
-  • OLLAMA_MODEL
-  • MONGODB_URI
-  • MONGODB_DATABASE
-  • MONGODB_COLLECTION
+  • OLLAMA_BASE_URL (http://localhost:11434)
+  • OLLAMA_MODEL (mistral, llama3.2, qwen2.5)
+  • MONGODB_URI (local or Atlas)
+  • MONGODB_DATABASE (lanchain_db)
+  • MONGODB_COLLECTION (movies)
   → Copy to .env and configure
 
 .gitignore
@@ -102,12 +106,12 @@ requirements.txt
 ----------------------
 
 README.md (Main Documentation)
-  • Project overview
+  • Project overview (TMDB dataset)
   • Installation instructions
   • Usage examples
   • Architecture explanation
   • Troubleshooting guide
-  • API reference
+  • TMDB schema reference
 
 QUICKSTART.md (Quick Setup)
   • 5-step setup process
@@ -197,9 +201,10 @@ KEY COMPONENTS
    • advanced_search
 
 3. Data Layer (MongoDB)
-   • 5000 movie documents
-   • 5 indexes (title, year, rating, director, genre)
+   • 50,000 movie documents
+   • 6 indexes (title, year, vote_average, tmdb_id, imdb_id, genres)
    • Aggregation pipelines
+   • Batch processing
 
 4. User Interface (main.py)
    • Interactive CLI
@@ -251,10 +256,11 @@ PROJECT STATISTICS
 
 Lines of Code:     ~500+ lines
 Number of Tools:   9 specialized tools (including hub_search_movies)
-Database Records:  5000 movies
+Database Records:  50,000 movies
 Documentation:     5 comprehensive guides
 Setup Time:        ~10 minutes (including Ollama)
 Query Time:        2-10 seconds average (local inference)
+Data Ingestion:    ~2-3 minutes (batch processing)
 
 
 NEXT STEPS
