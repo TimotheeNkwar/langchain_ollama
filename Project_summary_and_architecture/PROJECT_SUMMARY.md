@@ -170,6 +170,7 @@ http://localhost:8000/redoc (ReDoc)
 - **MongoDB**: NoSQL database (local or Atlas)
 - **PyMongo**: Database driver
 - **Pandas**: Data processing (CSV to MongoDB)
+- **Loguru 0.7.3**: Advanced logging with rotation (10 MB), retention (7 days)
 
 **Frontend:**
 - **React 18.2.0**: Modern UI library
@@ -185,6 +186,14 @@ http://localhost:8000/redoc (ReDoc)
 - Efficient aggregation pipelines
 - Batch insertion (1000 movies per batch)
 - Progress tracking for large data loads
+
+### Logging & Monitoring
+- **Loguru**: Centralized logging with automatic rotation
+- **Separate log files**: agent.log, api.log, main.log
+- **Rotation**: 10 MB per file with 7 days retention
+- **Rich formatting**: Timestamps, levels, function names, line numbers
+- **Backtrace**: Full stack traces for debugging
+- **Dual output**: File + colorized console
 
 ## What Makes This Special
 

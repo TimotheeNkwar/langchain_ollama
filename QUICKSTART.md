@@ -8,6 +8,8 @@ Get your TMDB Movie AI Agent running in 10 minutes!
 pip install -r requirements.txt
 ```
 
+**Installs:** LangChain, FastAPI, MongoDB driver, loguru (logging), and more.
+
 ## Step 2: Install and Start Ollama
 
 1. Download Ollama from [ollama.ai](https://ollama.ai)

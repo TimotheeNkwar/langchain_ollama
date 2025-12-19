@@ -145,6 +145,7 @@ main.py (Display to user)
 - `pymongo`: Database connectivity
 - `pandas`: Data processing
 - `python-dotenv`: Environment management
+- `loguru>=0.7.2`: Advanced logging with rotation and retention
 
 ## Scalability Considerations
 
@@ -239,6 +240,24 @@ self.agent = create_agent(
 2. **Ollama Server**: Connection, model availability
 3. **Agent**: Parsing and execution errors
 4. **User Interface**: Input validation
+
+## Logging Architecture
+
+### Loguru Implementation
+The application uses **loguru** for centralized, production-ready logging:
+
+**Configuration:**
+- **agent.log**: Agent operations, LLM interactions, tool selection
+- **api.log**: API requests, responses, server lifecycle
+- **main.log**: CLI interactions, user queries, errors
+
+**Features:**
+- Automatic rotation: 10 MB per file
+- Retention policy: 7 days
+- Rich format: `{time} | {level} | {name}:{function}:{line} - {message}`
+- Backtrace enabled: Full stack traces for debugging
+- Dual output: File + colorized console (INFO+)
+- Levels: DEBUG, INFO, WARNING, ERROR automatically categorized
 
 ### Recovery Strategies
 - **Retry logic**: Transient failures

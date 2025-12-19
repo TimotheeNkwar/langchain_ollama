@@ -48,8 +48,13 @@ langchain_ollama/
 │   ├── main.py                        (4.2 KB) - Interactive CLI interface
 │   
 │
+├── 📝 LOG FILES (Auto-generated, gitignored)
+│   ├── agent.log                      - Agent operations & tool execution logs
+│   ├── api.log                        - API requests & server events logs
+│   └── main.log                       - CLI interactions & user query logs
+│
 ├── ⚙️ CONFIGURATION FILES
-│   ├── requirements.txt               (149 B) - Python dependencies
+│   ├── requirements.txt               (165 B) - Python dependencies
 │   ├── .env.example                   (292 B) - Environment variables template
 │   └── .gitignore                     (329 B) - Git ignore rules
 │
@@ -132,6 +137,7 @@ requirements.txt
   • python-dotenv
   • pandas
   • pydantic
+  • loguru>=0.7.2 (Advanced logging)
 
 .env.example
   Template for environment variables:
@@ -321,6 +327,7 @@ Models:          Mistral / Llama3.2 / Llama3.1 / Qwen2.5
 Database:        MongoDB (local or Atlas)
 Data Processing: Pandas
 Environment:     python-dotenv
+Logging:         Loguru 0.7.3 (rotation, retention, backtrace)
 
 
 PROJECT STATISTICS
@@ -335,6 +342,8 @@ Setup Time:        ~10 minutes (including Ollama)
 Query Time:        2-10 seconds average (local inference)
 Data Ingestion:    ~2-3 minutes (batch processing)
 API Port:          8000 (FastAPI)
+Log Files:         3 (agent.log, api.log, main.log)
+Log Rotation:      10 MB per file, 7 days retention
 
 
 NEXT STEPS

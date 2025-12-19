@@ -16,6 +16,7 @@ An intelligent AI agent with **REST API** built with **LangChain 1.0+**, **FastA
 - **MongoDB Integration**: Efficient data storage and retrieval
 - **LangChain 1.0+ Agent**: Modern create_agent API with automatic tool selection
 - **Responsive Design**: Mobile-friendly interface
+- **Centralized Logging**: Loguru with rotation, retention, and separate log files (agent.log, api.log, main.log)
 
 ## 🏗️ Architecture
 
@@ -102,6 +103,12 @@ ollama list
 ```bash
 pip install -r requirements.txt
 ```
+
+**Dependencies include:**
+- langchain>=0.3.0 (Agent framework)
+- fastapi>=0.109.0 (REST API)
+- pymongo==4.6.1 (MongoDB driver)
+- loguru>=0.7.2 (Advanced logging with rotation)
 
 ### 5. Configure Environment Variables
 
@@ -274,14 +281,31 @@ For complete API documentation, see [API_README.md](API_README.md).
 🎬 You: Suggest a classic movie
 ```
 
-## 🛠️ Project Structure
+## � Logging
+
+The application uses **loguru** for centralized logging with automatic rotation and retention:
+
+- **agent.log** - Agent operations, tool selection, query processing
+- **api.log** - API requests, responses, server events
+- **main.log** - CLI interactions, user queries, errors
+
+**Configuration:**
+- Rotation: 10 MB per file
+- Retention: 7 days
+- Format: `{time} | {level} | {name}:{function}:{line} - {message}`
+- Backtrace: Enabled for debugging
+- Console output: INFO level and above
+
+Logs are automatically excluded from Git (.gitignore).
+
+## �🛠️ Project Structure
 
 ```
 langchain_ollama/
 ├── dataset/
 │   ├── movies.csv             # Original IMDB dataset (deprecated)
-│   ├── TMDB_movie_dataset_v11.csv  # TMDB dataset (50,000 movies)
-│   ├── TMDB_movie_dataset_5k.csv   # TMDB subset (5,000 movies)
+│   ├── TMDB_movie_dataset_v50k.csv  # TMDB dataset (50,000 movies)
+│  
 │   └── data.ipynb            # Notebook to create subsets
 ├── frontend/                  # React Web Frontend
 │   ├── src/
@@ -304,6 +328,9 @@ langchain_ollama/
 ├── data_ingestion.py          # Script to load data into MongoDB
 ├── main.py                    # Interactive CLI application
 ├── requirements.txt           # Python dependencies
+├── agent.log                  # Agent logs (auto-rotated, gitignored)
+├── api.log                    # API logs (auto-rotated, gitignored)
+├── main.log                   # Main logs (auto-rotated, gitignored)
 ├── .env.example               # Environment variables template
 ├── .env                       # Your configuration (create this)
 ├── .gitignore                 # Git ignore rules

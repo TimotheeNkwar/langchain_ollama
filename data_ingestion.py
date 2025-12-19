@@ -66,7 +66,7 @@ def load_data_to_mongodb():
 
     # Read CSV (limit to 50,000 movies)
     print("Reading CSV file...")
-    df = pd.read_csv('dataset/TMDB_movie_dataset_v11.csv', nrows=50000)
+    df = pd.read_csv('dataset/TMDB_movie_dataset_v50.csv', nrows=50000)
 
     print(f"Loaded {len(df)} movies from CSV")
 
