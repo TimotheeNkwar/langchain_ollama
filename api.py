@@ -43,6 +43,11 @@ def home():
         }
     })
 
+@app.route('/favicon.ico')
+def favicon():
+    """Return empty response for favicon requests"""
+    return '', 204
+
 @app.route('/api/movies/search', methods=['GET'])
 def search_movies():
     """
@@ -220,6 +225,14 @@ def health_check():
             'error': str(e)
         }), 503
 
+@app.errorhandler(400)
+def bad_request(error):
+    """Handle 400 errors (including HTTPS on HTTP)"""
+    return jsonify({
+        'error': 'Bad request',
+        'message': 'If you are trying to use HTTPS, this server runs on HTTP. Use http:// instead of https://'
+    }), 400
+
 @app.errorhandler(404)
 def not_found(error):
     """Handle 404 errors"""
@@ -240,10 +253,20 @@ def cleanup(error=None):
         agent = None
 
 if __name__ == '__main__':
+    print("\n" + "="*60)
     print("🚀 Starting IMDB Movie AI Agent API...")
-    print("📖 API documentation available at: http://localhost:5000/")
-    print("🔍 Example: http://localhost:5000/api/movies/search?title=batman")
-    print("💡 Use POST /api/query for natural language queries\n")
+    print("="*60)
+    print("\n📍 Access URLs:")
+    print("   - Local:    http://localhost:5000/")
+    print("   - Network:  http://192.168.x.x:5000/")
+    print("\n⚠️  Important: This server uses HTTP (not HTTPS)")
+    print("   Use http:// in your browser, NOT https://")
+    print("\n📖 Examples:")
+    print("   - Documentation: http://localhost:5000/")
+    print("   - Search:        http://localhost:5000/api/movies/search?title=batman")
+    print("   - Health:        http://localhost:5000/api/health")
+    print("\n💡 Use POST /api/query for natural language queries")
+    print("="*60 + "\n")
     
     # Run the Flask app
     app.run(
