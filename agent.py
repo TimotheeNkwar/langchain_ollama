@@ -8,15 +8,34 @@ This file:
 - Sets up a LangChain ReAct (Reason + Act) agent that chooses the tools
 """
 
-from langchain.agents import create_agent  # New LangChain 1.0+ API
-from langchain_ollama import ChatOllama  # LLM (model) accessible via Ollama (local server)
-from langchain_core.tools import Tool  # LangChain wrapper to declare functions usable by the agent
-from pymongo import MongoClient  # Official MongoDB client for Python
-from dotenv import load_dotenv  # Load environment variables from .env file
-import os  # OS access (environment variables, etc.)
-import json  # JSON serialization for clean output
-from typing import List, Dict, Any  # Types for annotation (readability, IDE, type checking)
-from datetime import datetime  # For timestamp in conversation history
+from langchain.agents import create_agent 
+from langchain_ollama import ChatOllama  
+from langchain_core.tools import Tool 
+from pymongo import MongoClient 
+from dotenv import load_dotenv  
+import os  
+import json  
+from typing import List, Dict, Any  
+from datetime import datetime
+from loguru import logger
+
+# Configure loguru for agent.py
+logger.remove()  # Remove default handler
+logger.add(
+    "agent.log",
+    rotation="10 MB",
+    retention="7 days",
+    level="DEBUG",
+    format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
+    backtrace=True,
+    diagnose=True
+)
+logger.add(
+    lambda msg: print(msg, end=''),
+    level="INFO",
+    format="{message}",
+    colorize=True
+)
 
 # Automatically load variables defined in ".env" file (in current directory)
 load_dotenv()
@@ -287,8 +306,11 @@ class MovieAgent:
         if isinstance(text, str):
             # strip() removes spaces; strip("'\"") also removes single/double quotes from edges
             return text.strip().strip("'\"")
+        
+        # If it's not a string, return as is
+        return text
 
-        # If it's not, session_id: str = None):
+    def __init__(self, session_id: str = None):
         # Initialize DB access (MongoDB)
         self.db_tools = MovieDatabaseTools()
         
@@ -296,10 +318,7 @@ class MovieAgent:
         self.session_id = session_id or 'default'
         
         # Load conversation history
-        self.conversation_history = self._load_conversation_history
-    def __init__(self):
-        # Initialize DB access (MongoDB)
-        self.db_tools = MovieDatabaseTools()
+        self.conversation_history = self._load_conversation_history()
 
         # Get Ollama URL from environment (e.g. http://localhost:11434)
         ollama_base_url = os.getenv("OLLAMA_BASE_URL")
@@ -334,13 +353,14 @@ class MovieAgent:
                     temperature=0,  # 0 => more deterministic outputs (less creativity)
                 )
 
-                # Console log to know which model was selected
-                print(f"✅ Using Ollama model: {model_name} ({ollama_base_url})")
+                # Log which model was selected
+                logger.info(f"✅ Using Ollama model: {model_name} ({ollama_base_url})")
 
                 # Exit the loop as soon as we have an LLM
                 break
             except Exception as e:
                 # If this model fails, store the error and move to the next
+                logger.debug(f"Failed to initialize {model_name}: {e}")
                 init_errors.append(f"{model_name}: {e}")
 
         # If after the loop we still don't have an LLM, stop with a clear error
@@ -418,6 +438,11 @@ When using tools:
 IMPORTANT: Never show function calls or tool names in your responses (like 'get_movies_by_director("Christopher Nolan")'). Only provide the final results in a natural, conversational way."""
 
         # Create the agent using the new LangChain 1.0+ API
+        self.agent = create_agent(
+            model=self.llm,  # the LLM model
+            tools=self.tools,  # the declared tools
+            system_prompt=system_prompt,  # instructions for the agent
+        )
     
     def _load_conversation_history(self) -> List[Dict[str, str]]:
         """Load conversation history from MongoDB
@@ -428,7 +453,70 @@ IMPORTANT: Never show function calls or tool names in your responses (like 'get_
         try:
             session_doc = self.db_tools.conversations.find_one(
                 {"session_id": self.session_id}
-            )Save user question to history
+            )
+            
+            if session_doc and "messages" in session_doc:
+                # Return last 10 messages
+                return session_doc["messages"][-10:]
+            
+            return []
+        except Exception as e:
+            logger.warning(f"⚠️ Could not load conversation history: {e}")
+            return []
+    
+    def _save_message(self, role: str, content: str):
+        """Save a message to conversation history in MongoDB
+        
+        Args:
+            role: 'user' or 'assistant'
+            content: Message content
+        """
+        try:
+            message = {
+                "role": role,
+                "content": content,
+                "timestamp": datetime.utcnow()
+            }
+            
+            # Upsert: update if exists, insert if not
+            self.db_tools.conversations.update_one(
+                {"session_id": self.session_id},
+                {
+                    "$push": {"messages": message},
+                    "$set": {"last_updated": datetime.utcnow()}
+                },
+                upsert=True
+            )
+            
+            # Add to local history
+            self.conversation_history.append(message)
+            
+            # Keep only last 10 messages in memory
+            if len(self.conversation_history) > 10:
+                self.conversation_history = self.conversation_history[-10:]
+                
+        except Exception as e:
+            logger.warning(f"⚠️ Could not save message to history: {e}")
+    
+    def clear_history(self):
+        """Clear conversation history for this session"""
+        try:
+            self.db_tools.conversations.delete_one({"session_id": self.session_id})
+            self.conversation_history = []
+            logger.info(f"✅ Conversation history cleared for session: {self.session_id}")
+        except Exception as e:
+            logger.error(f"❌ Error clearing history: {e}")
+
+    def query(self, question: str) -> str:
+        """Query the agent with a question
+
+        Param:
+            question: natural language question (e.g. "top 5 movies")
+        Return:
+            final output from the agent (string)
+        """
+        try:
+            # Save user question to history
             self._save_message("user", question)
             
             # Build messages with conversation history
@@ -469,75 +557,6 @@ IMPORTANT: Never show function calls or tool names in your responses (like 'get_
             error_msg = f"Error processing query: {str(e)}"
             self._save_message("assistant", error_msg)
             return error_msg
-        try:
-            message = {
-                "role": role,
-                "content": content,
-                "timestamp": datetime.utcnow()
-            }
-            
-            # Upsert: update if exists, insert if not
-            self.db_tools.conversations.update_one(
-                {"session_id": self.session_id},
-                {
-                    "$push": {"messages": message},
-                    "$set": {"last_updated": datetime.utcnow()}
-                },
-                upsert=True
-            )
-            
-            # Add to local history
-            self.conversation_history.append(message)
-            
-            # Keep only last 10 messages in memory
-            if len(self.conversation_history) > 10:
-                self.conversation_history = self.conversation_history[-10:]
-                
-        except Exception as e:
-            print(f"⚠️ Warning: Could not save message to history: {e}")
-    
-    def clear_history(self):
-        """Clear conversation history for this session"""
-        try:
-            self.db_tools.conversations.delete_one({"session_id": self.session_id})
-            self.conversation_history = []
-            print(f"✅ Conversation history cleared for session: {self.session_id}")
-        except Exception as e:
-            print(f"❌ Error clearing history: {e}")
-        # This is much simpler than the old ReAct agent + AgentExecutor approach
-        self.agent = create_agent(
-            model=self.llm,  # the LLM model
-            tools=self.tools,  # the declared tools
-            system_prompt=system_prompt,  # instructions for the agent
-        )
-
-    def query(self, question: str) -> str:
-        """Query the agent with a question
-
-        Param:
-            question: natural language question (e.g. "top 5 movies")
-        Return:
-            final output from the agent (string)
-        """
-        try:
-            # In LangChain 1.0+, the agent is invoked with messages
-            result = self.agent.invoke({"messages": [{"role": "user", "content": question}]})
-            
-            # Extract the final message from the agent's response
-            messages = result.get("messages", [])
-            if messages:
-                # Get the last message (the agent's final response)
-                last_message = messages[-1]
-                # Handle both dict and object formats
-                if isinstance(last_message, dict):
-                    return last_message.get("content", str(last_message))
-                else:
-                    return getattr(last_message, "content", str(last_message))
-            
-            return "No response generated"
-        except Exception as e:
-            # In case of error, return a debug message
-            return f"Error processing query: {str(e)}"
 
     def close(self):
         """Close database connection
@@ -554,14 +573,14 @@ if __name__ == "__main__":
     agent = MovieAgent()
 
     # Simple message to confirm init
-    print("Movie AI Agent initialized!")
+    logger.info("Movie AI Agent initialized!")
 
     # Display example questions the user can ask
-    print("\nExample queries:")
-    print("1. What are the top 5 rated movies?")
-    print("2. Show me Christopher Nolan movies")
-    print("3. Find action movies from the 2000s")
-    print("4. What movies has Leonardo DiCaprio been in?")
+    logger.info("\nExample queries:")
+    logger.info("1. What are the top 5 rated movies?")
+    logger.info("2. Show me Christopher Nolan movies")
+    logger.info("3. Find action movies from the 2000s")
+    logger.info("4. What movies has Leonardo DiCaprio been in?")
 
     # Close the DB connection (good practice)
     agent.close()

@@ -13,6 +13,25 @@ from contextlib import asynccontextmanager
 import os
 import json
 from typing import Optional
+from loguru import logger
+
+# Configure loguru for api.py
+logger.remove()  # Remove default handler
+logger.add(
+    "api.log",
+    rotation="10 MB",
+    retention="7 days",
+    level="DEBUG",
+    format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
+    backtrace=True,
+    diagnose=True
+)
+logger.add(
+    lambda msg: print(msg, end=''),
+    level="INFO",
+    format="{message}",
+    colorize=True
+)
 
 # Load environment variables
 load_dotenv()
@@ -31,19 +50,19 @@ def get_agent():
 async def lifespan(app: FastAPI):
     """Lifespan event handler for startup and shutdown"""
     # Startup
-    print("\n" + "="*60)
-    print("🚀 Starting IMDB Movie AI Agent API (FastAPI)")
-    print("="*60)
-    print("\n📍 Access URLs:")
-    print("   - Local:     http://localhost:8000/")
-    print("   - Network:   http://192.168.x.x:8000/")
-    print("   - Swagger:   http://localhost:8000/docs")
-    print("   - ReDoc:     http://localhost:8000/redoc")
-    print("\n📖 Examples:")
-    print("   - Search:    http://localhost:8000/api/movies/search?title=batman")
-    print("   - Health:    http://localhost:8000/api/health")
-    print("\n💡 Interactive API docs available at /docs")
-    print("="*60 + "\n")
+    logger.info("\n" + "="*60)
+    logger.info("🚀 Starting IMDB Movie AI Agent API (FastAPI)")
+    logger.info("="*60)
+    logger.info("\n📍 Access URLs:")
+    logger.info("   - Local:     http://localhost:8000/")
+    logger.info("   - Network:   http://192.168.x.x:8000/")
+    logger.info("   - Swagger:   http://localhost:8000/docs")
+    logger.info("   - ReDoc:     http://localhost:8000/redoc")
+    logger.info("\n📖 Examples:")
+    logger.info("   - Search:    http://localhost:8000/api/movies/search?title=batman")
+    logger.info("   - Health:    http://localhost:8000/api/health")
+    logger.info("\n💡 Interactive API docs available at /docs")
+    logger.info("="*60 + "\n")
     
     yield
     
@@ -52,7 +71,7 @@ async def lifespan(app: FastAPI):
     if agent is not None:
         agent.close()
         agent = None
-        print("\n✅ Agent closed successfully.")
+        logger.info("\n✅ Agent closed successfully.")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -267,13 +286,3 @@ async def health_check():
             status_code=503,
             detail={'status': 'unhealthy', 'error': str(e)}
         )
-
-# Startup and shutdown events
-@app.on_event("startup")
-async def startup_event():
-    """Initialize agent on startup"""
-    print("\n" + "="*60)
-    print("🚀 Starting IMDB Movie AI Agent API (FastAPI)")
-    print("="*60)
-    print("\n📍 Access URLs:")
-    print

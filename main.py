@@ -6,6 +6,25 @@ Run this to interact with the AI agent through the command line
 from agent import MovieAgent
 from dotenv import load_dotenv
 import os
+from loguru import logger
+
+# Configure loguru for main.py
+logger.remove()  # Remove default handler
+logger.add(
+    "main.log",
+    rotation="10 MB",
+    retention="7 days",
+    level="DEBUG",
+    format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
+    backtrace=True,
+    diagnose=True
+)
+logger.add(
+    lambda msg: print(msg, end=''),
+    level="INFO",
+    format="{message}",
+    colorize=True
+)
 
 def print_banner():
     """Print welcome banner"""
@@ -18,7 +37,7 @@ def print_banner():
     ║                                                           ║
     ╚═══════════════════════════════════════════════════════════╝
     """
-    print(banner)
+    logger.info(banner)
 
 def print_help():
     """Print help information"""
@@ -55,7 +74,7 @@ def print_help():
     - 'help' - Show this help message
     - 'exit' or 'quit' - Exit the application
     """
-    print(help_text)
+    logger.info(help_text)
 
 def main():
     """Main application loop"""
@@ -63,24 +82,24 @@ def main():
     load_dotenv()
     
     print_banner()
-    print("\n🚀 Initializing AI Agent...")
+    logger.info("\n🚀 Initializing AI Agent...")
     
     try:
         agent = MovieAgent()
-        print("✅ Agent initialized successfully!\n")
+        logger.info("✅ Agent initialized successfully!\n")
     except Exception as e:
-        print(f"❌ Error initializing agent: {str(e)}")
-        print("\nMake sure:")
-        print("1. MongoDB is running and accessible")
-        print("2. You've run data_ingestion.py to load the data")
-        print("3. Ollama is running (ollama serve)")
-        print("4. The mistral model is available (ollama pull mistral)")
+        logger.error(f"❌ Error initializing agent: {str(e)}")
+        logger.info("\nMake sure:")
+        logger.info("1. MongoDB is running and accessible")
+        logger.info("2. You've run data_ingestion.py to load the data")
+        logger.info("3. Ollama is running (ollama serve)")
+        logger.info("4. The mistral model is available (ollama pull mistral)")
         return
     
     print_help()
-    print("\n" + "="*60)
-    print("💬 Start chatting with the Movie AI Agent!")
-    print("="*60 + "\n")
+    logger.info("\n" + "="*60)
+    logger.info("💬 Start chatting with the Movie AI Agent!")
+    logger.info("="*60 + "\n")
     
     # Main interaction loop
     while True:
@@ -94,7 +113,7 @@ def main():
             
             # Handle commands
             if user_input.lower() in ['exit', 'quit', 'q']:
-                print("\n👋 Thank you for using Movie AI Agent! Goodbye!")
+                logger.info("\n👋 Thank you for using Movie AI Agent! Goodbye!")
                 break
             
             if user_input.lower() == 'help':
@@ -102,20 +121,20 @@ def main():
                 continue
             
             # Query the agent
-            print("\n🤖 Agent: ", end="", flush=True)
+            logger.info("\n🤖 Agent: ", end="", flush=True)
             response = agent.query(user_input)
-            print(response)
+            logger.info(response)
             
         except KeyboardInterrupt:
-            print("\n\n👋 Interrupted. Goodbye!")
+            logger.info("\n\n👋 Interrupted. Goodbye!")
             break
         except Exception as e:
-            print(f"\n❌ Error: {str(e)}")
-            print("Please try again or type 'help' for examples.")
+            logger.error(f"\n❌ Error: {str(e)}")
+            logger.info("Please try again or type 'help' for examples.")
     
     # Cleanup
     agent.close()
-    print("\n✅ Agent closed successfully.")
+    logger.info("\n✅ Agent closed successfully.")
 
 if __name__ == "__main__":
     main()
