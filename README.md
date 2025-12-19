@@ -1,27 +1,47 @@
 # 🎬 TMDB Movie AI Agent with MongoDB and LangChain
 
-An intelligent AI agent built with **LangChain** and **MongoDB** that can answer questions about 50,000 movies from The Movie Database (TMDB). The agent uses Ollama (local LLM) to understand natural language queries and intelligently retrieves information from a MongoDB database.
+An intelligent AI agent with **REST API** built with **LangChain 1.0+**, **FastAPI**, and **MongoDB** that can answer questions about 50,000 movies from The Movie Database (TMDB). The agent uses Ollama (local LLM) to understand natural language queries and intelligently retrieves information from a MongoDB database.
 
 ## 🌟 Features
 
 - **Natural Language Queries**: Ask questions in plain English
+- **REST API with FastAPI**: 10 endpoints with automatic OpenAPI documentation
+- **Interactive CLI**: Command-line interface for direct interaction
 - **Intelligent Search**: Search movies by title, director, actor, genre, year, and more
 - **Smart Recommendations**: Get movie recommendations based on preferences
 - **Statistical Analysis**: Get insights about the movie database
 - **MongoDB Integration**: Efficient data storage and retrieval
-- **LangChain Agent**: Autonomous decision-making for complex queries
+- **LangChain 1.0+ Agent**: Modern create_agent API with automatic tool selection
 
 ## 🏗️ Architecture
 
 ```
-User Query → LangChain Agent → Tool Selection → MongoDB Query → Response
-                ↓
-          Ollama (Local LLM)
+┌─────────────────────────────────────────────────────────┐
+│                    User Interfaces                      │
+│          CLI (main.py)  |  REST API (api.py)           │
+│                      Port 8000                          │
+└────────────────────────┬────────────────────────────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │   LangChain 1.0+     │
+              │   Agent (8 tools)    │
+              └──────────┬───────────┘
+                         │
+              ┌──────────▼───────────┐
+              │  Ollama (Local LLM)  │
+              │ mistral/llama3.2/... │
+              └──────────┬───────────┘
+                         │
+              ┌──────────▼───────────┐
+              │   MongoDB Database   │
+              │   50,000 movies      │
+              └──────────────────────┘
 ```
 
-The agent uses LangChain's ReAct agent capabilities to:
-1. Understand user intent
-2. Select appropriate database tools
+The agent uses LangChain's 1.0+ create_agent API to:
+1. Understand user intent via Ollama LLM
+2. Automatically select appropriate database tools
 3. Query MongoDB efficiently
 4. Format responses in a user-friendly way
 
@@ -144,11 +164,43 @@ Year range: 1874 - 2025
 
 ## 🎮 Usage
 
-### Start the Interactive Agent
+### Option 1: Interactive CLI Agent
 
 ```bash
 python main.py
 ```
+
+### Option 2: REST API Server
+
+**Start the API:**
+```bash
+# Using Uvicorn directly
+uvicorn api:app --reload --host 0.0.0.0 --port 8000
+
+# OR using the launcher script
+python run_api.py
+```
+
+**Access the API:**
+- API Base: `http://localhost:8000`
+- Interactive Docs (Swagger): `http://localhost:8000/docs`
+- ReDoc Documentation: `http://localhost:8000/redoc`
+
+**API Examples:**
+```bash
+# Search movies
+curl "http://localhost:8000/api/movies/search?title=batman"
+
+# Get top rated movies
+curl "http://localhost:8000/api/movies/top?limit=5"
+
+# Natural language query
+curl -X POST http://localhost:8000/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What are the best sci-fi movies?"}'
+```
+
+For complete API documentation, see [API_README.md](API_README.md).
 
 ### Example Queries
 
@@ -200,7 +252,10 @@ langchain_ollama/
 │   └── PROJECT_SUMMARY.md     # Project overview and summary
 ├── testing/
 │   └── test_setup.py          # Environment verification script
-├── agent.py                   # LangChain ReAct agent implementation
+├── agent.py                   # LangChain 1.0+ agent implementation
+├── api.py                     # FastAPI REST API server (port 8000)
+├── run_api.py                 # API launcher script
+├── test_api.py                # API testing script
 ├── data_ingestion.py          # Script to load data into MongoDB
 ├── main.py                    # Interactive CLI application
 ├── requirements.txt           # Python dependencies
@@ -208,9 +263,10 @@ langchain_ollama/
 ├── .env                       # Your configuration (create this)
 ├── .gitignore                 # Git ignore rules
 ├── LICENSE                    # Project license
+├── README.md                  # This file (main documentation)
+├── API_README.md              # FastAPI documentation
 ├── ARCHITECTURE.md            # System architecture documentation
-├── QUICKSTART.md              # Quick setup guide
-└── README.md                  # This file
+└── QUICKSTART.md              # Quick setup guide
 ```
 
 ## 🔧 How It Works
@@ -379,19 +435,26 @@ pip install -r requirements.txt --upgrade
 **Enhancements you can add:**
 
 1. **Vector Search**: Add embeddings for semantic search
-2. **Web Interface**: Build a Flask/FastAPI web UI
-3. **More Data**: Expand with reviews, ratings, streaming availability
-4. **Visualization**: Add charts and graphs for statistics
-5. **Recommendations**: Implement collaborative filtering
-6. **Multi-language**: Add support for multiple languages
+2. **Web Frontend**: Build React/Vue.js frontend consuming the API
+3. **Authentication**: Add JWT or OAuth2 to the API
+4. **Rate Limiting**: Implement API rate limiting
+5. **Caching**: Add Redis for frequent query caching
+6. **More Data**: Expand with reviews, ratings, streaming availability
+7. **Visualization**: Add charts and graphs for statistics
+8. **Recommendations**: Implement collaborative filtering
+9. **Multi-language**: Add support for multiple languages
+10. **WebSockets**: Real-time streaming responses
 
 ## 📚 Resources
 
 - [LangChain Documentation](https://python.langchain.com/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [MongoDB Python Driver](https://pymongo.readthedocs.io/)
 - [Ollama Documentation](https://ollama.ai/)
 - [Ollama Python Library](https://github.com/ollama/ollama-python)
+- [Uvicorn Documentation](https://www.uvicorn.org/)
 - [TMDB Dataset](https://www.kaggle.com/datasets/asaniczka/tmdb-movies-dataset-2023-930k-movies)
+- [API Documentation](API_README.md) - Complete REST API reference
 
 ## 📝 License
 
@@ -414,6 +477,16 @@ Feel free to fork, modify, and enhance this project! Some ideas:
 
 ---
 
-**Built with ❤️ using LangChain, MongoDB, and Ollama**
+## 📖 Documentation
+
+- **[README.md](README.md)** - This file (main documentation)
+- **[API_README.md](API_README.md)** - Complete REST API documentation
+- **[QUICKSTART.md](QUICKSTART.md)** - Quick setup guide
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture details
+- **[PROJECT_SUMMARY.md](Project_summary/PROJECT_SUMMARY.md)** - Project overview
+
+---
+
+**Built with ❤️ using LangChain 1.0+, FastAPI, MongoDB, and Ollama**
 
 Happy movie hunting! 🎬🍿
