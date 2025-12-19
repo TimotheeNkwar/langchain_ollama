@@ -16,6 +16,7 @@ from dotenv import load_dotenv  # Load environment variables from .env file
 import os  # OS access (environment variables, etc.)
 import json  # JSON serialization for clean output
 from typing import List, Dict, Any  # Types for annotation (readability, IDE, type checking)
+from datetime import datetime  # For timestamp in conversation history
 
 # Automatically load variables defined in ".env" file (in current directory)
 load_dotenv()
@@ -48,6 +49,9 @@ class MovieDatabaseTools:
         self.client = MongoClient(mongodb_uri)
         self.db = self.client[database_name]
         self.collection = self.db[collection_name]
+        
+        # Collection for conversation history
+        self.conversations = self.db['conversations']
 
     def search_movies_by_title(self, title: str) -> str:
         """Search for movies by title (case-insensitive partial match)
@@ -284,9 +288,15 @@ class MovieAgent:
             # strip() removes spaces; strip("'\"") also removes single/double quotes from edges
             return text.strip().strip("'\"")
 
-        # If it's not a str, return it as is
-        return text
-
+        # If it's not, session_id: str = None):
+        # Initialize DB access (MongoDB)
+        self.db_tools = MovieDatabaseTools()
+        
+        # Session ID for conversation memory (default: 'default')
+        self.session_id = session_id or 'default'
+        
+        # Load conversation history
+        self.conversation_history = self._load_conversation_history
     def __init__(self):
         # Initialize DB access (MongoDB)
         self.db_tools = MovieDatabaseTools()
@@ -405,9 +415,95 @@ When using tools:
 - Use get_movie_statistics to get overall database statistics
 - Use advanced_search for complex queries across all fields
 
-Always provide complete, helpful answers based on the data you find."""
+IMPORTANT: Never show function calls or tool names in your responses (like 'get_movies_by_director("Christopher Nolan")'). Only provide the final results in a natural, conversational way."""
 
         # Create the agent using the new LangChain 1.0+ API
+    
+    def _load_conversation_history(self) -> List[Dict[str, str]]:
+        """Load conversation history from MongoDB
+        
+        Returns:
+            List of messages with role and content
+        """
+        try:
+            session_doc = self.db_tools.conversations.find_one(
+                {"session_id": self.session_id}
+            )Save user question to history
+            self._save_message("user", question)
+            
+            # Build messages with conversation history
+            messages = []
+            
+            # Add conversation history (for context)
+            for msg in self.conversation_history[:-1]:  # Exclude the just-added user message
+                messages.append({
+                    "role": msg["role"],
+                    "content": msg["content"]
+                })
+            
+            # Add current question
+            messages.append({"role": "user", "content": question})
+            
+            # In LangChain 1.0+, the agent is invoked with messages
+            result = self.agent.invoke({"messages": messages})
+            
+            # Extract the final message from the agent's response
+            result_messages = result.get("messages", [])
+            if result_messages:
+                # Get the last message (the agent's final response)
+                last_message = result_messages[-1]
+                # Handle both dict and object formats
+                if isinstance(last_message, dict):
+                    answer = last_message.get("content", str(last_message))
+                else:
+                    answer = getattr(last_message, "content", str(last_message))
+                
+                # Save assistant response to history
+                self._save_message("assistant", answer)
+                
+                return answer
+            
+            return "No response generated"
+        except Exception as e:
+            # In case of error, return a debug message
+            error_msg = f"Error processing query: {str(e)}"
+            self._save_message("assistant", error_msg)
+            return error_msg
+        try:
+            message = {
+                "role": role,
+                "content": content,
+                "timestamp": datetime.utcnow()
+            }
+            
+            # Upsert: update if exists, insert if not
+            self.db_tools.conversations.update_one(
+                {"session_id": self.session_id},
+                {
+                    "$push": {"messages": message},
+                    "$set": {"last_updated": datetime.utcnow()}
+                },
+                upsert=True
+            )
+            
+            # Add to local history
+            self.conversation_history.append(message)
+            
+            # Keep only last 10 messages in memory
+            if len(self.conversation_history) > 10:
+                self.conversation_history = self.conversation_history[-10:]
+                
+        except Exception as e:
+            print(f"⚠️ Warning: Could not save message to history: {e}")
+    
+    def clear_history(self):
+        """Clear conversation history for this session"""
+        try:
+            self.db_tools.conversations.delete_one({"session_id": self.session_id})
+            self.conversation_history = []
+            print(f"✅ Conversation history cleared for session: {self.session_id}")
+        except Exception as e:
+            print(f"❌ Error clearing history: {e}")
         # This is much simpler than the old ReAct agent + AgentExecutor approach
         self.agent = create_agent(
             model=self.llm,  # the LLM model
