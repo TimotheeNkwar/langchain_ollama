@@ -11,11 +11,13 @@
                          │ Natural Language Query
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      main.py                                 │
-│                 (CLI Interface)                              │
+│                   main.py / api.py                           │
+│            (CLI Interface / REST API)                        │
 │  • User input handling                                       │
 │  • Response formatting                                       │
 │  • Session management                                        │
+│  • FastAPI endpoints (port 8000)                             │
+│  • OpenAPI docs at /docs                                     │
 └────────────────────────┬────────────────────────────────────┘
                          │
                          │ Query
@@ -33,7 +35,7 @@
 │                     │ Tool Selection                         │
 │                     ▼                                        │
 │  ┌──────────────────────────────────────────────┐          │
-│  │           Tool Executor                      │          │
+│  │      Tool Executor (8 tools)                 │          │
 │  │  • search_movies_by_title                    │          │
 │  │  • get_movies_by_director                    │          │
 │  │  • get_top_rated_movies                      │          │
@@ -109,10 +111,11 @@ main.py (Display to user)
 
 ## Key Design Patterns
 
-### 1. Agent Pattern
-- **LangChain ReAct Agent**: Autonomous decision-making
-- **Tool-based Architecture**: Modular, extensible tools
-- **Function Calling**: LLM selects appropriate tools
+### 1. Agent Pattern (LangChain 1.0+)
+- **create_agent API**: Simplified agent creation
+- **Tool-based Architecture**: Modular, extensible 8 tools
+- **Automatic Tool Selection**: LLM autonomously chooses tools
+- **Message-based Invocation**: Modern message passing pattern
 
 ### 2. Repository Pattern
 - **MovieDatabaseTools**: Abstracts database operations
@@ -128,14 +131,17 @@ main.py (Display to user)
 
 ### Core Technologies
 - **Python 3.8+**: Programming language
-- **LangChain**: Agent framework
+- **LangChain 1.0+**: Agent framework with create_agent API
 - **Ollama**: Local LLM server (mistral, llama3.2, llama3.1, qwen2.5)
+- **FastAPI 0.125.0**: Modern REST API framework
 - **MongoDB**: NoSQL database
 - **PyMongo**: MongoDB driver
 
 ### Key Libraries
-- `langchain`: Agent orchestration
-- `langchain-ollama`: Ollama integration
+- `langchain>=1.0.0`: Agent orchestration
+- `langchain-ollama>=1.0.0`: Ollama integration
+- `fastapi>=0.109.0`: REST API framework
+- `uvicorn[standard]>=0.27.0`: ASGI server
 - `pymongo`: Database connectivity
 - `pandas`: Data processing
 - `python-dotenv`: Environment management
@@ -175,12 +181,14 @@ main.py (Display to user)
 
 ### Adding New Tools
 ```python
-# In agent.py
+# In agent.py - add to self.tools list
 Tool(
     name="your_tool_name",
-    func=self.db_tools.your_function,
-    description="When to use this tool"
+    func=lambda x: self.db_tools.your_function(self.clean_input(x)),
+    description="When to use this tool - be specific for LLM understanding"
 )
+
+# Then agent will automatically have access to the new tool
 ```
 
 ### Adding New Data Sources
@@ -198,13 +206,17 @@ class NewDataSource:
 
 ### Custom Agent Behavior
 ```python
-# Modify prompt in agent.py
-template = """Your custom ReAct prompt template...
+# Modify system_prompt in agent.py
+system_prompt = """Your custom instructions for the agent.
 
-Question: {input}
-Thought:{agent_scratchpad}"""
+Describe the tools and when to use them.
+Provide clear guidelines for the agent's behavior."""
 
-self.prompt = PromptTemplate.from_template(template)
+self.agent = create_agent(
+    model=self.llm,
+    tools=self.tools,
+    system_prompt=system_prompt
+)
 ```
 
 ## Performance Metrics

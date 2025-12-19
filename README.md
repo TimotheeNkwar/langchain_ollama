@@ -224,7 +224,7 @@ langchain_ollama/
 
 ### 2. Movie Agent (`agent.py`)
 
-**Tools Available:
+**Tools Available (8 tools):**
 - `search_movies_by_title`: Search by movie title
 - `get_movies_by_director`: Find movies by director
 - `get_top_rated_movies`: Get highest-rated movies
@@ -234,10 +234,10 @@ langchain_ollama/
 - `get_movie_statistics`: Database analytics
 - `advanced_search`: Complex multi-field search
 
-**Agent Workflow:**
+**Agent Workflow (LangChain 1.0+):**
 1. Receives natural language query
-2. Uses Ollama LLM (local model) to understand intent
-3. Selects appropriate tool(s) using ReAct reasoning
+2. Uses Ollama LLM (mistral/llama3.2/llama3.1/qwen2.5) to understand intent
+3. Selects appropriate tool(s) automatically
 4. Executes MongoDB queries
 5. Formats and returns results
 
@@ -247,6 +247,15 @@ langchain_ollama/
 - Handles user input/output
 - Manages agent lifecycle
 - Error handling and user guidance
+
+### 4. FastAPI REST API (`api.py`)
+
+- RESTful API endpoints for movie queries
+- Automatic OpenAPI documentation at `/docs`
+- CORS support for web applications
+- 10 endpoints including health checks
+- Runs on port 8000
+- Start with: `uvicorn api:app --reload` or `python run_api.py`
 
 ## 📊 Database Schema
 

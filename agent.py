@@ -8,16 +8,9 @@ This file:
 - Sets up a LangChain ReAct (Reason + Act) agent that chooses the tools
 """
 
-# AgentExecutor executes the agent + tools, create_react_agent builds a ReAct agent
-try:
-    from langchain.agents import AgentExecutor, create_react_agent
-except ImportError:
-    from langchain_core.agents import AgentExecutor
-    from langchain.agents import create_react_agent
-
+from langchain.agents import create_agent  # New LangChain 1.0+ API
 from langchain_ollama import ChatOllama  # LLM (model) accessible via Ollama (local server)
 from langchain_core.tools import Tool  # LangChain wrapper to declare functions usable by the agent
-from langchain import hub  # LangChain Hub (hosted prompts/tools), used here via hub.run(...)
 from pymongo import MongoClient  # Official MongoDB client for Python
 from dotenv import load_dotenv  # Load environment variables from .env file
 import os  # OS access (environment variables, etc.)
@@ -30,6 +23,15 @@ load_dotenv()
 # Disable (optional) LangSmith tracing by forcing the environment variable to "false"
 # (useful if you don't want to send traces / or avoid a warning)
 os.environ["LANGCHAIN_TRACING_V2"] = "false"
+
+# Fix for Pydantic v2 compatibility with LangChain - must import cache first
+try:
+    from langchain_core.caches import BaseCache
+    from langchain_core.globals import set_llm_cache
+    # Initialize with no cache to avoid the error
+    set_llm_cache(None)
+except ImportError:
+    pass
 
 class MovieDatabaseTools:
     """Tools for querying the IMDB movie database
@@ -386,71 +388,31 @@ class MovieAgent:
                 func=lambda x: self.db_tools.advanced_search(self.clean_input(x)),
                 description="Advanced search across all movie fields. Use for complex queries about plot, themes, or combinations of criteria.",
             ),
-            Tool(
-                name="hub_search_movies",
-                # Call LangChain Hub passing it a text query.
-                # Note: hub.run depends on what LangChain Hub provides; this is not MongoDB.
-                func=lambda x: hub.run(f"search movies titled '{self.clean_input(x)}'"),
-                description="Use LangChain Hub to search for movies by title with enhanced capabilities. Input should be a movie title or partial title.",
-            ),
         ]
 
-        # Local import (in __init__): avoids loading PromptTemplate if we don't instantiate the agent.
-        from langchain.prompts import PromptTemplate
+        # System prompt for the agent (replaces the old template)
+        system_prompt = """You are a helpful assistant that answers questions about movies in the IMDB database.
 
-        # ReAct prompt template:
-        # - describes available tools
-        # - imposes strict "Question/Thought/Action/Action Input/Observation" format
-        template = """You are a helpful assistant that answers questions about movies in the IMDB database.
+You have access to tools to search and analyze movie data. Use the tools to find information, then provide a clear and helpful answer.
 
-You have access to the following tools:
+When using tools:
+- Use search_movies_by_title to find movies by name
+- Use get_movies_by_director to find movies by a specific director
+- Use get_top_rated_movies to find the highest rated movies
+- Use get_movies_by_genre to find movies of a specific genre
+- Use get_movies_by_year_range to find movies from a time period
+- Use get_movies_with_actor to find movies featuring an actor
+- Use get_movie_statistics to get overall database statistics
+- Use advanced_search for complex queries across all fields
 
-{tools}
+Always provide complete, helpful answers based on the data you find."""
 
-IMPORTANT: Use this EXACT format (each on a separate line):
-
-Question: the input question
-Thought: think about what to do
-Action: one of [{tool_names}]
-Action Input: the input for the action (without quotes or parentheses)
-Observation: the result will appear here
-... (repeat Thought/Action/Action Input/Observation as needed)
-Thought: I now know the final answer
-Final Answer: the complete answer to the question
-
-EXAMPLE:
-Question: What are the top 5 movies?
-Thought: I should get the top rated movies from the database
-Action: get_top_rated_movies
-Action Input: 5
-Observation: [results will be shown here]
-Thought: I now have the information needed
-Final Answer: Here are the top 5 movies...
-
-BEGIN!
-
-Question: {input}
-Thought:{agent_scratchpad}"""
-
-        # Build a LangChain PromptTemplate from the string
-        self.prompt = PromptTemplate.from_template(template)
-
-        # Build the ReAct agent:
-        # - self.llm: the model
-        # - self.tools: list of tools
-        # - self.prompt: instructions + format
-        self.agent = create_react_agent(self.llm, self.tools, self.prompt)
-
-        # AgentExecutor: orchestrator that:
-        # - launches the agent
-        # - executes the tools
-        # - manages the Thought/Action/Observation loop
-        self.agent_executor = AgentExecutor(
-            agent=self.agent,  # the ReAct agent
+        # Create the agent using the new LangChain 1.0+ API
+        # This is much simpler than the old ReAct agent + AgentExecutor approach
+        self.agent = create_agent(
+            model=self.llm,  # the LLM model
             tools=self.tools,  # the declared tools
-            verbose=False,  # set to True for debugging
-            max_iterations=5,  # limits the loop to avoid infinite loops
-            handle_parsing_errors=True,  # tries to survive poorly formatted model outputs
+            system_prompt=system_prompt,  # instructions for the agent
         )
 
     def query(self, question: str) -> str:
@@ -462,11 +424,21 @@ Thought:{agent_scratchpad}"""
             final output from the agent (string)
         """
         try:
-            # invoke expects a dict of inputs according to the prompt: here {input: question}
-            response = self.agent_executor.invoke({"input": question})
-
-            # The AgentExecutor often returns a dict containing "output"
-            return response["output"]
+            # In LangChain 1.0+, the agent is invoked with messages
+            result = self.agent.invoke({"messages": [{"role": "user", "content": question}]})
+            
+            # Extract the final message from the agent's response
+            messages = result.get("messages", [])
+            if messages:
+                # Get the last message (the agent's final response)
+                last_message = messages[-1]
+                # Handle both dict and object formats
+                if isinstance(last_message, dict):
+                    return last_message.get("content", str(last_message))
+                else:
+                    return getattr(last_message, "content", str(last_message))
+            
+            return "No response generated"
         except Exception as e:
             # In case of error, return a debug message
             return f"Error processing query: {str(e)}"

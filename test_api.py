@@ -1,12 +1,12 @@
 """
-Test script for the Movie AI Agent API
-Run this after starting the API server (python api.py)
+Test script for the Movie AI Agent API (FastAPI)
+Run this after starting the API server (uvicorn api:app --reload)
 """
 
 import requests
 import json
 
-BASE_URL = "http://localhost:5000"
+BASE_URL = "http://localhost:8000"
 
 def print_section(title):
     """Print a section header"""
@@ -139,9 +139,9 @@ def main():
         print("  All tests completed!")
         print("✅"*30 + "\n")
         
-    except requests.exceptions.ConnectionError:
         print("\n❌ Error: Cannot connect to API")
-        print("Make sure the API server is running: python api.py\n")
+        print("Make sure the API server is running:")
+        print("  uvicorn api:app --reload --host 0.0.0.0 --port 8000\n")
     except Exception as e:
         print(f"\n❌ Error during testing: {str(e)}\n")
 

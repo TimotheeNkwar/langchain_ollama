@@ -1,19 +1,21 @@
 """
-Flask API for IMDB Movie AI Agent
+FastAPI for IMDB Movie AI Agent
 Provides REST endpoints to query the movie database
 """
 
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, Query, HTTPException, status
+from fastapi.responses import JSONResponse, Response
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from agent import MovieAgent
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 import os
 import json
+from typing import Optional
 
 # Load environment variables
 load_dotenv()
-
-# Initialize Flask app
-app = Flask(__name__)
 
 # Initialize the agent (singleton)
 agent = None
@@ -25,12 +27,70 @@ def get_agent():
         agent = MovieAgent()
     return agent
 
-@app.route('/')
-def home():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan event handler for startup and shutdown"""
+    # Startup
+    print("\n" + "="*60)
+    print("🚀 Starting IMDB Movie AI Agent API (FastAPI)")
+    print("="*60)
+    print("\n📍 Access URLs:")
+    print("   - Local:     http://localhost:8000/")
+    print("   - Network:   http://192.168.x.x:8000/")
+    print("   - Swagger:   http://localhost:8000/docs")
+    print("   - ReDoc:     http://localhost:8000/redoc")
+    print("\n📖 Examples:")
+    print("   - Search:    http://localhost:8000/api/movies/search?title=batman")
+    print("   - Health:    http://localhost:8000/api/health")
+    print("\n💡 Interactive API docs available at /docs")
+    print("="*60 + "\n")
+    
+    yield
+    
+    # Shutdown
+    global agent
+    if agent is not None:
+        agent.close()
+        agent = None
+        print("\n✅ Agent closed successfully.")
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="🎬 IMDB Movie AI Agent API",
+    description="REST API to query movie database using AI Agent",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    lifespan=lifespan
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Pydantic models
+class QueryRequest(BaseModel):
+    question: str
+
+class QueryResponse(BaseModel):
+    question: str
+    answer: str
+
+@app.get("/")
+async def home():
     """Home endpoint with API documentation"""
-    return jsonify({
+    return {
         'message': '🎬 IMDB Movie AI Agent API',
-        'version': '1.0',
+        'version': '1.0.0',
+        'documentation': {
+            'swagger_ui': '/docs',
+            'redoc': '/redoc'
+        },
         'endpoints': {
             'GET /api/movies/search': 'Search movies by title',
             'GET /api/movies/director': 'Get movies by director',
@@ -39,238 +99,181 @@ def home():
             'GET /api/movies/year-range': 'Get movies by year range',
             'GET /api/movies/actor': 'Get movies with actor',
             'GET /api/movies/statistics': 'Get database statistics',
-            'POST /api/query': 'Query the AI agent with natural language'
+            'POST /api/query': 'Query the AI agent with natural language',
+            'GET /api/health': 'Health check endpoint'
         }
-    })
+    }
 
-@app.route('/favicon.ico')
-def favicon():
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
     """Return empty response for favicon requests"""
-    return '', 204
+    return Response(status_code=204)
 
-@app.route('/api/movies/search', methods=['GET'])
-def search_movies():
+@app.get("/api/movies/search")
+async def search_movies(title: str = Query(..., description="Movie title or partial title")):
     """
-    Search movies by title
-    Query params: title (required)
-    Example: /api/movies/search?title=batman
-    """
-    title = request.args.get('title')
-    if not title:
-        return jsonify({'error': 'Missing required parameter: title'}), 400
+    Search movies by title (case-insensitive partial match)
     
+    - **title**: Movie title or partial title to search for
+    """
     try:
         agent_instance = get_agent()
         result = agent_instance.db_tools.search_movies_by_title(title)
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({'message': result})
+        try:
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return {"message": result}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/api/movies/director', methods=['GET'])
-def movies_by_director():
+@app.get("/api/movies/director")
+async def movies_by_director(name: str = Query(..., description="Director's name")):
     """
-    Get movies by director
-    Query params: name (required)
-    Example: /api/movies/director?name=nolan
-    """
-    name = request.args.get('name')
-    if not name:
-        return jsonify({'error': 'Missing required parameter: name'}), 400
+    Get all movies by a specific director
     
+    - **name**: Director's name or partial name
+    """
     try:
         agent_instance = get_agent()
         result = agent_instance.db_tools.get_movies_by_director(name)
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({'message': result})
+        try:
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return {"message": result}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/api/movies/top', methods=['GET'])
-def top_movies():
+@app.get("/api/movies/top")
+async def top_movies(limit: int = Query(10, description="Number of movies to return", ge=1, le=50)):
     """
-    Get top rated movies
-    Query params: limit (optional, default 10)
-    Example: /api/movies/top?limit=20
-    """
-    limit = request.args.get('limit', 10)
+    Get top rated movies from the database
     
+    - **limit**: Number of movies to return (1-50, default: 10)
+    """
     try:
         agent_instance = get_agent()
         result = agent_instance.db_tools.get_top_rated_movies(limit)
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({'message': result})
+        try:
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return {"message": result}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/api/movies/genre', methods=['GET'])
-def movies_by_genre():
+@app.get("/api/movies/genre")
+async def movies_by_genre(genre: str = Query(..., description="Movie genre")):
     """
     Get movies by genre
-    Query params: genre (required)
-    Example: /api/movies/genre?genre=action
-    """
-    genre = request.args.get('genre')
-    if not genre:
-        return jsonify({'error': 'Missing required parameter: genre'}), 400
     
+    - **genre**: Genre name (e.g., Action, Drama, Comedy)
+    """
     try:
         agent_instance = get_agent()
         result = agent_instance.db_tools.get_movies_by_genre(genre)
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({'message': result})
+        try:
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return {"message": result}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/api/movies/year-range', methods=['GET'])
-def movies_by_year_range():
+@app.get("/api/movies/year-range")
+async def movies_by_year_range(
+    start: int = Query(..., description="Start year", ge=1800, le=2100),
+    end: int = Query(..., description="End year", ge=1800, le=2100)
+):
     """
-    Get movies by year range
-    Query params: start (required), end (required)
-    Example: /api/movies/year-range?start=1990&end=2000
+    Get movies within a year range
+    
+    - **start**: Start year (inclusive)
+    - **end**: End year (inclusive)
     """
-    start = request.args.get('start')
-    end = request.args.get('end')
-    
-    if not start or not end:
-        return jsonify({'error': 'Missing required parameters: start and end'}), 400
-    
     try:
         agent_instance = get_agent()
-        result = agent_instance.db_tools.get_movies_by_year_range(int(start), int(end))
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({'message': result})
-    except ValueError:
-        return jsonify({'error': 'start and end must be valid years'}), 400
+        result = agent_instance.db_tools.get_movies_by_year_range(start, end)
+        try:
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return {"message": result}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/api/movies/actor', methods=['GET'])
-def movies_with_actor():
+@app.get("/api/movies/actor")
+async def movies_with_actor(name: str = Query(..., description="Actor's name")):
     """
-    Get movies with specific actor
-    Query params: name (required)
-    Example: /api/movies/actor?name=dicaprio
-    """
-    name = request.args.get('name')
-    if not name:
-        return jsonify({'error': 'Missing required parameter: name'}), 400
+    Get movies featuring a specific actor
     
+    - **name**: Actor's name or partial name
+    """
     try:
         agent_instance = get_agent()
         result = agent_instance.db_tools.get_movies_with_actor(name)
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({'message': result})
+        try:
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return {"message": result}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/api/movies/statistics', methods=['GET'])
-def movies_statistics():
+@app.get("/api/movies/statistics")
+async def movies_statistics():
     """
-    Get database statistics
-    Example: /api/movies/statistics
+    Get statistical information about the movie database
+    
+    Returns total movies, average rating, year range, and top directors
     """
     try:
         agent_instance = get_agent()
         result = agent_instance.db_tools.get_movie_statistics()
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({'message': result})
+        try:
+            return json.loads(result)
+        except json.JSONDecodeError:
+            return {"message": result}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/api/query', methods=['POST'])
-def query_agent():
+@app.post("/api/query", response_model=QueryResponse)
+async def query_agent(query: QueryRequest):
     """
     Query the AI agent with natural language
-    Body: { "question": "What are the best movies from the 1990s?" }
-    Example: POST /api/query
+    
+    - **question**: Natural language question about movies
+    
+    Example: "What are the best movies from the 1990s?"
     """
-    data = request.get_json()
-    
-    if not data or 'question' not in data:
-        return jsonify({'error': 'Missing required field: question'}), 400
-    
-    question = data['question']
-    
     try:
         agent_instance = get_agent()
-        response = agent_instance.query(question)
-        return jsonify({
-            'question': question,
-            'answer': response
-        })
+        response = agent_instance.query(query.question)
+        return QueryResponse(question=query.question, answer=response)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
+@app.get("/api/health")
+async def health_check():
+    """
+    Health check endpoint
+    
+    Returns the status of the API, database connection, and agent
+    """
     try:
         agent_instance = get_agent()
-        return jsonify({
+        return {
             'status': 'healthy',
             'database': 'connected',
             'agent': 'ready'
-        })
+        }
     except Exception as e:
-        return jsonify({
-            'status': 'unhealthy',
-            'error': str(e)
-        }), 503
+        raise HTTPException(
+            status_code=503,
+            detail={'status': 'unhealthy', 'error': str(e)}
+        )
 
-@app.errorhandler(400)
-def bad_request(error):
-    """Handle 400 errors (including HTTPS on HTTP)"""
-    return jsonify({
-        'error': 'Bad request',
-        'message': 'If you are trying to use HTTPS, this server runs on HTTP. Use http:// instead of https://'
-    }), 400
-
-@app.errorhandler(404)
-def not_found(error):
-    """Handle 404 errors"""
-    return jsonify({'error': 'Endpoint not found'}), 404
-
-@app.errorhandler(500)
-def internal_error(error):
-    """Handle 500 errors"""
-    return jsonify({'error': 'Internal server error'}), 500
-
-# Cleanup on shutdown
-@app.teardown_appcontext
-def cleanup(error=None):
-    """Close agent connection when app context tears down"""
-    global agent
-    if agent is not None:
-        agent.close()
-        agent = None
-
-if __name__ == '__main__':
+# Startup and shutdown events
+@app.on_event("startup")
+async def startup_event():
+    """Initialize agent on startup"""
     print("\n" + "="*60)
-    print("🚀 Starting IMDB Movie AI Agent API...")
+    print("🚀 Starting IMDB Movie AI Agent API (FastAPI)")
     print("="*60)
     print("\n📍 Access URLs:")
-    print("   - Local:    http://localhost:5000/")
-    print("   - Network:  http://192.168.x.x:5000/")
-    print("\n⚠️  Important: This server uses HTTP (not HTTPS)")
-    print("   Use http:// in your browser, NOT https://")
-    print("\n📖 Examples:")
-    print("   - Documentation: http://localhost:5000/")
-    print("   - Search:        http://localhost:5000/api/movies/search?title=batman")
-    print("   - Health:        http://localhost:5000/api/health")
-    print("\n💡 Use POST /api/query for natural language queries")
-    print("="*60 + "\n")
-    
-    # Run the Flask app
-    app.run(
-        host='0.0.0.0',
-        port=5000,
-        debug=True
-    )
+    print

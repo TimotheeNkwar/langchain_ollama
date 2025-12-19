@@ -2,8 +2,9 @@
 
 ## What You've Built
 
-A complete AI Agent application that intelligently queries and analyzes 50,000 movies from The Movie Database (TMDB) using:
-- **LangChain** for agent orchestration
+A complete AI Agent application with REST API that intelligently queries and analyzes 50,000 movies from The Movie Database (TMDB) using:
+- **LangChain 1.0+** with create_agent API for agent orchestration
+- **FastAPI** for modern REST API endpoints
 - **MongoDB** for data storage
 - **Ollama (Local LLM)** for natural language understanding
 
@@ -11,9 +12,12 @@ A complete AI Agent application that intelligently queries and analyzes 50,000 m
 
 ### Core Application Files
 1. **`main.py`** - Interactive CLI interface for chatting with the agent
-2. **`movie_agent.py`** - LangChain agent with 8 specialized tools
-3. **`data_ingestion.py`** - Script to load CSV data into MongoDB
-4. **`test_setup.py`** - Verification script to check your setup
+2. **`agent.py`** - LangChain 1.0+ agent with 8 specialized tools
+3. **`api.py`** - FastAPI REST API server (port 8000)
+4. **`run_api.py`** - API launcher script
+5. **`test_api.py`** - API testing script
+6. **`data_ingestion.py`** - Script to load CSV data into MongoDB
+7. **`test_setup.py`** - Verification script to check your setup
 
 ### Configuration Files
 5. **`requirements.txt`** - Python dependencies
@@ -22,9 +26,10 @@ A complete AI Agent application that intelligently queries and analyzes 50,000 m
 
 ### Documentation Files
 8. **`README.md`** - Complete project documentation (9KB)
-9. **`QUICKSTART.md`** - 5-minute setup guide
-10. **`ARCHITECTURE.md`** - System architecture and design patterns
-11. **`PROJECT_SUMMARY.md`** - This file
+9. **`API_README.md`** - FastAPI endpoints documentation
+10. **`QUICKSTART.md`** - 5-minute setup guide
+11. **`ARCHITECTURE.md`** - System architecture and design patterns
+12. **`PROJECT_SUMMARY.md`** - This file
 
 ### Data Files
 12. **`movies.csv`** - Original IMDB dataset (deprecated)
@@ -34,11 +39,13 @@ A complete AI Agent application that intelligently queries and analyzes 50,000 m
 
 ## Key Features Implemented
 
-### 🤖 AI Agent Capabilities
+### 🤖 AI Agent Capabilities (LangChain 1.0+)
 - Natural language query understanding
-- Autonomous tool selection
+- Automatic tool selection with create_agent API
 - Context-aware responses
-- Multi-step reasoning
+- Message-based communication pattern
+- REST API with FastAPI (10 endpoints)
+- Automatic OpenAPI/Swagger documentation
 
 ### 🔧 8 Specialized Tools
 1. **search_movies_by_title** - Find movies by name
@@ -79,8 +86,12 @@ python test_setup.py
 # 4. Load data
 python data_ingestion.py
 
-# 5. Run the agent
+# 5. Run the CLI agent
 python main.py
+
+# OR run the REST API
+uvicorn api:app --reload
+# API docs available at: http://localhost:8000/docs
 ```
 
 ## Example Interactions
@@ -105,6 +116,16 @@ python main.py
 - Inception (2010) - A mind-bending thriller about dream manipulation
 - The Matrix (1999) - A hacker discovers reality is a simulation
 ...
+
+# REST API Usage
+curl http://localhost:8000/api/movies/top?limit=5
+curl -X POST http://localhost:8000/api/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What are the best sci-fi movies?"}'
+
+# Access interactive API docs
+http://localhost:8000/docs (Swagger UI)
+http://localhost:8000/redoc (ReDoc)
 ```
 
 ## Technical Highlights
@@ -116,8 +137,10 @@ python main.py
 
 ### Technologies Used
 - **Python 3.8+**: Core language
-- **LangChain 0.1.0**: Agent framework
-- **Ollama**: Local LLM (Mistral, Llama3.2, or Qwen2.5)
+- **LangChain 1.0+**: Agent framework with create_agent API
+- **FastAPI 0.125.0**: Modern REST API framework
+- **Uvicorn 0.38.0**: ASGI server
+- **Ollama**: Local LLM (Mistral, Llama3.2, Llama3.1, Qwen2.5)
 - **MongoDB**: NoSQL database (local or Atlas)
 - **PyMongo**: Database driver
 - **Pandas**: Data processing (CSV to MongoDB)
@@ -161,10 +184,11 @@ Easy to add:
 By building this project, you've learned:
 
 ### LangChain Concepts
-- ✅ Agent creation and configuration
-- ✅ Tool definition and integration
-- ✅ Prompt engineering
-- ✅ ReAct agent pattern with Ollama
+- ✅ Agent creation with LangChain 1.0+ create_agent API
+- ✅ Tool definition and integration (8 tools)
+- ✅ System prompt engineering
+- ✅ Message-based agent invocation
+- ✅ Automatic tool selection
 
 ### MongoDB Skills
 - ✅ Document database design
@@ -176,8 +200,11 @@ By building this project, you've learned:
 ### Software Engineering
 - ✅ Clean architecture
 - ✅ Separation of concerns
+- ✅ RESTful API design with FastAPI
+- ✅ OpenAPI/Swagger documentation
 - ✅ Error handling
 - ✅ Environment configuration
+- ✅ CORS configuration
 
 ### AI/ML Concepts
 - ✅ Natural language processing
@@ -192,12 +219,16 @@ By building this project, you've learned:
 2. **Better Formatting**: Rich terminal output with colors
 3. **Query History**: Save and replay previous queries
 4. **Favorites**: Let users save favorite movies
+5. **API Authentication**: Add JWT tokens or API keys
+6. **Rate Limiting**: Protect API from abuse
 
 ### Intermediate Enhancements
-1. **Web Interface**: Build Flask/FastAPI web app
+1. **Web Frontend**: Build React/Vue.js frontend for the API
 2. **Vector Search**: Add semantic similarity search
 3. **Recommendations**: Implement collaborative filtering
 4. **User Profiles**: Personalized recommendations
+5. **WebSockets**: Real-time streaming responses
+6. **Caching**: Redis for API response caching
 
 ### Advanced Features
 1. **Multi-Agent System**: Specialized agents for different tasks
@@ -245,13 +276,15 @@ By building this project, you've learned:
 
 ## Project Statistics
 
-- **Lines of Code**: ~500+ lines
+- **Lines of Code**: ~600+ lines
 - **Number of Tools**: 8 specialized tools
+- **API Endpoints**: 10 REST endpoints
 - **Database Records**: 50,000 movies
-- **Documentation**: 4 comprehensive guides
+- **Documentation**: 6 comprehensive guides
 - **Setup Time**: ~10 minutes (including data ingestion)
 - **Data Ingestion Time**: ~2-3 minutes (batch processing)
-- **Query Response Time**: 2-5 seconds
+- **Query Response Time**: 2-10 seconds
+- **API Port**: 8000 (FastAPI with Uvicorn)
 
 ## Success Metrics
 
@@ -273,11 +306,13 @@ This project is designed to be extended. Fork it and:
 
 ## Final Notes
 
-You've built a production-ready AI agent that demonstrates:
-- Modern AI/ML techniques
+You've built a production-ready AI agent with REST API that demonstrates:
+- Modern AI/ML techniques with LangChain 1.0+
 - Clean software architecture
+- RESTful API design with FastAPI
+- Automatic API documentation (OpenAPI/Swagger)
 - Real-world database integration
-- User-friendly interfaces
+- Multiple user interfaces (CLI + REST API)
 
 This project serves as a foundation for more complex AI applications. The patterns and techniques used here scale to enterprise-level systems.
 
