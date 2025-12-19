@@ -448,7 +448,7 @@ Thought:{agent_scratchpad}"""
         self.agent_executor = AgentExecutor(
             agent=self.agent,  # the ReAct agent
             tools=self.tools,  # the declared tools
-            verbose=True,  # displays steps (debug)
+            verbose=False,  # set to True for debugging
             max_iterations=5,  # limits the loop to avoid infinite loops
             handle_parsing_errors=True,  # tries to survive poorly formatted model outputs
         )
