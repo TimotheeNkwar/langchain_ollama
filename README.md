@@ -6,20 +6,24 @@ An intelligent AI agent with **REST API** built with **LangChain 1.0+**, **FastA
 
 - **Natural Language Queries**: Ask questions in plain English
 - **REST API with FastAPI**: 10 endpoints with automatic OpenAPI documentation
+- **Modern Web Frontend**: React + Vite with Netflix-inspired UI
 - **Interactive CLI**: Command-line interface for direct interaction
 - **Intelligent Search**: Search movies by title, director, actor, genre, year, and more
+- **AI Chat Interface**: Real-time chat with AI assistant in the browser
 - **Smart Recommendations**: Get movie recommendations based on preferences
+- **Advanced Filters**: Multi-criteria search (genre, year, rating, director, actor)
 - **Statistical Analysis**: Get insights about the movie database
 - **MongoDB Integration**: Efficient data storage and retrieval
 - **LangChain 1.0+ Agent**: Modern create_agent API with automatic tool selection
+- **Responsive Design**: Mobile-friendly interface
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    User Interfaces                      │
-│          CLI (main.py)  |  REST API (api.py)           │
-│                      Port 8000                          │
+│   CLI (main.py) | REST API (api.py) | React Frontend   │
+│                 Port 8000           | Port 3000         │
 └────────────────────────┬────────────────────────────────┘
                          │
                          ▼
@@ -186,6 +190,38 @@ python run_api.py
 - Interactive Docs (Swagger): `http://localhost:8000/docs`
 - ReDoc Documentation: `http://localhost:8000/redoc`
 
+### Option 3: React Web Frontend
+
+**Start the frontend:**
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies (first time only)
+npm install
+
+# Start development server
+npm run dev
+```
+
+**Access the frontend:**
+- Web App: `http://localhost:3000`
+- Features: Movie search, AI chat, advanced filters, Netflix-style UI
+
+**Note:** The API server must be running on port 8000 for the frontend to work.
+
+**Full Stack Setup:**
+```bash
+# Terminal 1: Start backend API
+uvicorn api:app --reload
+
+# Terminal 2: Start frontend
+cd frontend
+npm run dev
+```
+
+For complete frontend documentation, see [frontend/README.md](frontend/README.md).
+
 **API Examples:**
 ```bash
 # Search movies
@@ -247,15 +283,24 @@ langchain_ollama/
 │   ├── TMDB_movie_dataset_v11.csv  # TMDB dataset (50,000 movies)
 │   ├── TMDB_movie_dataset_5k.csv   # TMDB subset (5,000 movies)
 │   └── data.ipynb            # Notebook to create subsets
+├── frontend/                  # React Web Frontend
+│   ├── src/
+│   │   ├── components/       # React components (MovieCard, MovieSearch, AIChat)
+│   │   ├── services/         # API service layer
+│   │   ├── App.jsx           # Main app component
+│   │   └── main.jsx          # Entry point
+│   ├── package.json          # Dependencies (React, Vite, Axios)
+│   ├── vite.config.js        # Vite configuration
+│   └── README.md             # Frontend documentation
 ├── Project_summary/
 │   ├── PROJECT_STRUCTURE.txt  # Detailed project structure documentation
 │   └── PROJECT_SUMMARY.md     # Project overview and summary
 ├── testing/
 │   └── test_setup.py          # Environment verification script
+|      |_ test_api.py                # API testing script
 ├── agent.py                   # LangChain 1.0+ agent implementation
 ├── api.py                     # FastAPI REST API server (port 8000)
 ├── run_api.py                 # API launcher script
-├── test_api.py                # API testing script
 ├── data_ingestion.py          # Script to load data into MongoDB
 ├── main.py                    # Interactive CLI application
 ├── requirements.txt           # Python dependencies

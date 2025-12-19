@@ -5,23 +5,11 @@
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                         USER                                 │
-│          CLI  |  Web Browser (React App)                    │
-└────────────────┬────────────────────┬───────────────────────┘
-                 │                    │
-                 │                    │ HTTP Requests
-                 │                    ▼
-                 │         ┌─────────────────────────────────┐
-                 │         │   React Frontend (Port 3000)    │
-                 │         │   • MovieSearch component       │
-                 │         │   • AIChat component            │
-                 │         │   • MovieCard/List components   │
-                 │         │   • API service layer (axios)   │
-                 │         └──────────┬──────────────────────┘
-                 │                    │
-                 │ Natural            │ HTTP/API Calls
-                 │ Language           │ (proxied via Vite)
-                 │ Query              │
-                 ▼                    ▼
+│                    (Command Line)                            │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         │ Natural Language Query
+                         ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   main.py / api.py                           │
 │            (CLI Interface / REST API)                        │
@@ -30,7 +18,6 @@
 │  • Session management                                        │
 │  • FastAPI endpoints (port 8000)                             │
 │  • OpenAPI docs at /docs                                     │
-│  • CORS enabled for frontend                                 │
 └────────────────────────┬────────────────────────────────────┘
                          │
                          │ Query

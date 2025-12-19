@@ -16,7 +16,30 @@ langchain_ollama/
 ├── 📁 testing/
 │   └── test_setup.py                  (5.5 KB) - Environment verification script
 │       |__test_api.py                 (2.5 KB) - API testing script
-|
+│
+├── 📁 frontend/                        - React Frontend Application (Vite)
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── MovieCard.jsx          - Movie card component
+│   │   │   ├── MovieCard.css
+│   │   │   ├── MovieList.jsx          - Movie grid display
+│   │   │   ├── MovieList.css
+│   │   │   ├── MovieSearch.jsx        - Search interface with filters
+│   │   │   ├── MovieSearch.css
+│   │   │   ├── AIChat.jsx             - AI chat assistant
+│   │   │   └── AIChat.css
+│   │   ├── services/
+│   │   │   └── api.js                 - API service layer (axios)
+│   │   ├── App.jsx                    - Main app component
+│   │   ├── App.css
+│   │   ├── main.jsx                   - React entry point
+│   │   └── index.css                  - Global styles (Netflix theme)
+│   ├── package.json                   - Dependencies (React, Vite, axios)
+│   ├── vite.config.js                 - Vite config (port 3000, proxy)
+│   ├── index.html                     - HTML template
+│   ├── .gitignore                     - Frontend ignore rules
+│   └── README.md                      - Frontend documentation
+│
 ├── 🐍 PYTHON APPLICATION FILES
 │   ├── agent.py                       (11.2 KB) - LangChain Agent with 8 tools (LangChain 1.0+)
 │   ├── api.py                         (8.5 KB) - FastAPI REST API (port 8000)
@@ -37,7 +60,7 @@ langchain_ollama/
     ├── ARCHITECTURE.md                (10.1 KB) - System architecture details
     └── LICENSE                        (1.1 KB) - Project license
 
-TOTAL: 18 files across 3 folders, ~150+ MB
+TOTAL: 35+ files across 5 folders, ~150+ MB (excluding node_modules)
 
 
 FILE DESCRIPTIONS

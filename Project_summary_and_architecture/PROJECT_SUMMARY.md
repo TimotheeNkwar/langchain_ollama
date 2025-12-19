@@ -19,6 +19,15 @@ A complete AI Agent application with REST API that intelligently queries and ana
 6. **`data_ingestion.py`** - Script to load CSV data into MongoDB
 7. **`test_setup.py`** - Verification script to check your setup
 
+### Frontend Application (React + Vite)
+8. **`frontend/`** - Modern web interface
+   - **`src/components/`** - React components (MovieCard, MovieList, MovieSearch, AIChat)
+   - **`src/services/api.js`** - API service layer with axios
+   - **`src/App.jsx`** - Main application component with routing
+   - **`package.json`** - React 18, Vite 5, Axios dependencies
+   - **`vite.config.js`** - Dev server on port 3000 with API proxy
+   - **`README.md`** - Frontend documentation
+
 ### Configuration Files
 5. **`requirements.txt`** - Python dependencies
 6. **`.env.example`** - Template for environment variables
@@ -46,6 +55,15 @@ A complete AI Agent application with REST API that intelligently queries and ana
 - Message-based communication pattern
 - REST API with FastAPI (10 endpoints)
 - Automatic OpenAPI/Swagger documentation
+
+### 🌐 Modern Web Interface
+- React 18 with Vite for fast development
+- Netflix-inspired dark theme with responsive design
+- Advanced search with multiple filters (genre, year, rating, director, actor)
+- AI chat interface with conversation history
+- Real-time movie search and recommendations
+- Beautiful movie cards with posters and ratings
+- Mobile-friendly responsive layout
 
 ### 🔧 8 Specialized Tools
 1. **search_movies_by_title** - Find movies by name
@@ -92,6 +110,12 @@ python main.py
 # OR run the REST API
 uvicorn api:app --reload
 # API docs available at: http://localhost:8000/docs
+
+# OR run the Web Frontend (requires API running)
+cd frontend
+npm install  # first time only
+npm run dev
+# Web app available at: http://localhost:3000
 ```
 
 ## Example Interactions
@@ -136,6 +160,8 @@ http://localhost:8000/redoc (ReDoc)
 - **Tool-based Design**: Modular, extensible functionality
 
 ### Technologies Used
+
+**Backend:**
 - **Python 3.8+**: Core language
 - **LangChain 1.0+**: Agent framework with create_agent API
 - **FastAPI 0.125.0**: Modern REST API framework
@@ -144,6 +170,13 @@ http://localhost:8000/redoc (ReDoc)
 - **MongoDB**: NoSQL database (local or Atlas)
 - **PyMongo**: Database driver
 - **Pandas**: Data processing (CSV to MongoDB)
+
+**Frontend:**
+- **React 18.2.0**: Modern UI library
+- **Vite 5.0.8**: Next-generation build tool
+- **Axios 1.6.2**: HTTP client for API calls
+- **React Icons 4.12.0**: Icon library
+- **CSS3**: Custom styling with Netflix-inspired theme
 
 ### Performance Optimizations
 - Database indexes on frequently queried fields
@@ -276,15 +309,18 @@ By building this project, you've learned:
 
 ## Project Statistics
 
-- **Lines of Code**: ~600+ lines
+- **Lines of Code**: ~2000+ lines (backend + frontend)
 - **Number of Tools**: 8 specialized tools
 - **API Endpoints**: 10 REST endpoints
 - **Database Records**: 50,000 movies
-- **Documentation**: 6 comprehensive guides
-- **Setup Time**: ~10 minutes (including data ingestion)
+- **Documentation**: 7 comprehensive guides
+- **Setup Time**: ~15 minutes (including data ingestion + npm install)
 - **Data Ingestion Time**: ~2-3 minutes (batch processing)
 - **Query Response Time**: 2-10 seconds
 - **API Port**: 8000 (FastAPI with Uvicorn)
+- **Frontend Port**: 3000 (Vite dev server)
+- **React Components**: 8 components (MovieCard, MovieList, MovieSearch, AIChat, App, etc.)
+- **UI Theme**: Netflix-inspired dark theme
 
 ## Success Metrics
 

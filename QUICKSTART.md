@@ -68,9 +68,23 @@ Wait for "Data ingestion complete!" message (~2-3 minutes).
 
 ## Step 6: Run the Agent
 
+**Option A: CLI Agent**
 ```bash
 python main.py
 ```
+
+**Option B: Web Frontend**
+```bash
+# Terminal 1: Start backend API
+uvicorn api:app --reload
+
+# Terminal 2: Start frontend
+cd frontend
+npm install  # first time only
+npm run dev
+```
+
+Then open http://localhost:3000 in your browser!
 
 ## Try These Queries
 
