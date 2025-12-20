@@ -5,8 +5,8 @@ Run this to interact with the AI agent through the command line
 
 from agent import MovieAgent
 from dotenv import load_dotenv
-import os
 from loguru import logger
+import sys
 
 # Configure loguru for main.py
 logger.remove()  # Remove default handler
@@ -17,10 +17,11 @@ logger.add(
     level="DEBUG",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
     backtrace=True,
-    diagnose=True
+    diagnose=True,
+    encoding="utf-8"
 )
 logger.add(
-    lambda msg: print(msg, end=''),
+    sys.stdout,
     level="INFO",
     format="{message}",
     colorize=True
@@ -80,10 +81,11 @@ def main():
     """Main application loop"""
     # Load environment variables
     load_dotenv()
-    
+
     print_banner()
     logger.info("\n🚀 Initializing AI Agent...")
-    
+
+    agent = None
     try:
         agent = MovieAgent()
         logger.info("✅ Agent initialized successfully!\n")
@@ -94,47 +96,51 @@ def main():
         logger.info("2. You've run data_ingestion.py to load the data")
         logger.info("3. Ollama is running (ollama serve)")
         logger.info("4. The mistral model is available (ollama pull mistral)")
-        return
-    
+        return 1
+
     print_help()
     logger.info("\n" + "="*60)
     logger.info("💬 Start chatting with the Movie AI Agent!")
     logger.info("="*60 + "\n")
-    
+
     # Main interaction loop
-    while True:
-        try:
-            # Get user input
-            user_input = input("\n🎬 You: ").strip()
-            
-            # Handle empty input
-            if not user_input:
-                continue
-            
-            # Handle commands
-            if user_input.lower() in ['exit', 'quit', 'q']:
-                logger.info("\n👋 Thank you for using Movie AI Agent! Goodbye!")
+    try:
+        while True:
+            try:
+                # Get user input
+                user_input = input("\n🎬 You: ").strip()
+
+                # Handle empty input
+                if not user_input:
+                    continue
+
+                # Handle commands
+                if user_input.lower() in ['exit', 'quit', 'q']:
+                    logger.info("\n👋 Thank you for using Movie AI Agent! Goodbye!")
+                    break
+
+                if user_input.lower() == 'help':
+                    print_help()
+                    continue
+
+                # Query the agent
+                logger.info("\n🤖 Agent: ")
+                response = agent.query(user_input)
+                logger.info(response)
+
+            except KeyboardInterrupt:
+                logger.info("\n\n👋 Interrupted. Goodbye!")
                 break
-            
-            if user_input.lower() == 'help':
-                print_help()
-                continue
-            
-            # Query the agent
-            logger.info("\n🤖 Agent: ", end="", flush=True)
-            response = agent.query(user_input)
-            logger.info(response)
-            
-        except KeyboardInterrupt:
-            logger.info("\n\n👋 Interrupted. Goodbye!")
-            break
-        except Exception as e:
-            logger.error(f"\n❌ Error: {str(e)}")
-            logger.info("Please try again or type 'help' for examples.")
-    
-    # Cleanup
-    agent.close()
-    logger.info("\n✅ Agent closed successfully.")
+            except Exception as e:
+                logger.error(f"\n❌ Error: {str(e)}")
+                logger.info("Please try again or type 'help' for examples.")
+    finally:
+        # Cleanup
+        if agent:
+            agent.close()
+            logger.info("\n✅ Agent closed successfully.")
+
+    return 0
 
 if __name__ == "__main__":
     main()
