@@ -24,7 +24,7 @@ logger.remove()  # Remove default handler
 logger.add(
     "agent.log",
     rotation="10 MB",
-    retention="7 days",
+    retention="5 days",
     level="DEBUG",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
     backtrace=True,
