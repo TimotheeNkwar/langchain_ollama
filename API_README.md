@@ -10,6 +10,7 @@ Modern REST API built with **FastAPI** for querying 50,000 movies using an intel
 - **CORS Enabled** - Ready for web applications and frontend frameworks
 - **High Performance** - Built with FastAPI and async support
 - **AI-Powered** - Uses LangChain 1.0+ and local Ollama LLMs
+- **Production Logging** - Loguru with automatic rotation (api.log)
 
 ## 🚀 Quick Start
 

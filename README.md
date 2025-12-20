@@ -281,7 +281,7 @@ For complete API documentation, see [API_README.md](API_README.md).
 🎬 You: Suggest a classic movie
 ```
 
-## � Logging
+## 📝 Logging
 
 The application uses **loguru** for centralized logging with automatic rotation and retention:
 
@@ -298,14 +298,14 @@ The application uses **loguru** for centralized logging with automatic rotation 
 
 Logs are automatically excluded from Git (.gitignore).
 
-## �🛠️ Project Structure
+## 🛠️ Project Structure
 
 ```
 langchain_ollama/
 ├── dataset/
 │   ├── movies.csv             # Original IMDB dataset (deprecated)
-│   ├── TMDB_movie_dataset_v50k.csv  # TMDB dataset (50,000 movies)
-│  
+│   ├── TMDB_movie_dataset_v11.csv  # TMDB full dataset (50,000 movies)
+│   ├── TMDB_movie_dataset_5k.csv   # TMDB subset (5,000 movies)
 │   └── data.ipynb            # Notebook to create subsets
 ├── frontend/                  # React Web Frontend
 │   ├── src/
@@ -316,9 +316,10 @@ langchain_ollama/
 │   ├── package.json          # Dependencies (React, Vite, Axios)
 │   ├── vite.config.js        # Vite configuration
 │   └── README.md             # Frontend documentation
-├── Project_summary/
+├── Project_summary_and_architecture/
 │   ├── PROJECT_STRUCTURE.txt  # Detailed project structure documentation
 │   └── PROJECT_SUMMARY.md     # Project overview and summary
+│   └── ARCHITECTURE.md        # System architecture details
 ├── testing/
 │   └── test_setup.py          # Environment verification script
 |      |_ test_api.py                # API testing script
@@ -555,7 +556,8 @@ Feel free to fork, modify, and enhance this project! Some ideas:
 - **[API_README.md](API_README.md)** - Complete REST API documentation
 - **[QUICKSTART.md](QUICKSTART.md)** - Quick setup guide
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture details
-- **[PROJECT_SUMMARY.md](Project_summary/PROJECT_SUMMARY.md)** - Project overview
+- **[PROJECT_SUMMARY.md](Project_summary_and_architecture/PROJECT_SUMMARY.md)** - Project overview
+- **[PROJECT_STRUCTURE.txt](Project_summary_and_architecture/PROJECT_STRUCTURE.txt)** - Detailed file descriptions
 
 ---
 
