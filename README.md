@@ -118,7 +118,6 @@ Create a `.env` file in the project root:
 # Copy the example file
 copy .env.example .env
 ```
-
 Edit `.env` and add your configuration:
 
 ```env
