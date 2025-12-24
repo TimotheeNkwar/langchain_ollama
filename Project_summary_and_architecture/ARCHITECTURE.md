@@ -55,7 +55,16 @@
 │  • Query construction                                        │
 │  • Result formatting                                         │
 │  • Error handling                                            │
+│  • Redis caching (automatic)                                 │
 └────────────────────────┬────────────────────────────────────┘
+                         │
+                    ┌────┴────┐
+                    │         │
+                    ▼         ▼
+          ┌─────────────┐  ┌──────────┐
+          │ Redis Cache │  │ MongoDB  │
+          │  (Fallback) │  │ Database │
+          └─────────────┘  └──────────┘
                          │
                          │ PyMongo
                          ▼
@@ -136,6 +145,7 @@ main.py (Display to user)
 - **FastAPI 0.125.0**: Modern REST API framework
 - **MongoDB**: NoSQL database
 - **PyMongo**: MongoDB driver
+- **Redis 5.0+**: In-memory cache for query optimization
 
 ### Key Libraries
 - `langchain>=1.0.0`: Agent orchestration
@@ -146,6 +156,7 @@ main.py (Display to user)
 - `pandas`: Data processing
 - `python-dotenv`: Environment management
 - `loguru>=0.7.2`: Advanced logging with rotation and retention
+- `redis>=5.0.0`: Query caching and performance optimization
 
 ## Scalability Considerations
 
@@ -156,7 +167,7 @@ main.py (Display to user)
 - **Ollama Server**: Runs locally (http://localhost:11434)
 
 ### Future Enhancements
-- **Caching**: Redis for frequent queries
+- ~~**Caching**: Redis for frequent queries~~ ✅ **IMPLEMENTED**
 - **Connection pooling**: Better MongoDB performance
 - **Async operations**: Handle concurrent requests
 - **Vector search**: Semantic similarity search
@@ -231,7 +242,11 @@ self.agent = create_agent(
 1. **Indexes**: Pre-created on common fields
 2. **Projection**: Return only needed fields
 3. **Limits**: Cap result sets
-4. **Caching**: Store frequent queries
+4. **Redis Caching**: Automatic caching with TTL (30min-1hr)
+   - Title search: 30 minutes TTL
+   - Director/Genre/Actor: 1 hour TTL
+   - Cache stats: `/api/cache/stats`
+   - Graceful fallback if Redis unavailable
 
 ## Error Handling
 

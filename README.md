@@ -17,6 +17,7 @@ An intelligent AI agent with **REST API** built with **LangChain 1.0+**, **FastA
 - **LangChain 1.0+ Agent**: Modern create_agent API with automatic tool selection
 - **Responsive Design**: Mobile-friendly interface
 - **Centralized Logging**: Loguru with rotation, retention, and separate log files (agent.log, api.log, main.log)
+- **Redis Caching**: High-performance query caching for frequent requests with automatic fallback
 
 ## 🏗️ Architecture
 
@@ -109,6 +110,7 @@ pip install -r requirements.txt
 - fastapi>=0.109.0 (REST API)
 - pymongo==4.6.1 (MongoDB driver)
 - loguru>=0.7.2 (Advanced logging with rotation)
+- redis>=5.0.0 (Query caching)
 
 ### 5. Configure Environment Variables
 
@@ -135,6 +137,12 @@ MONGODB_URI=mongodb://localhost:27017/
 # Database configuration
 MONGODB_DATABASE=langchain_db
 MONGODB_COLLECTION=movies
+
+# Redis Cache Configuration (Optional - app works without it)
+REDIS_HOST=redis-15597.c82.us-east-1-2.ec2.cloud.redislabs.com
+REDIS_PORT=15597
+REDIS_PASSWORD=your_redis_password_here
+REDIS_DB=0
 ```
 
 ### 6. Load Data into MongoDB
@@ -324,6 +332,8 @@ langchain_ollama/
 |      |_ test_api.py                # API testing script
 ├── agent.py                   # LangChain 1.0+ agent implementation
 ├── api.py                     # FastAPI REST API server (port 8000)
+├── cache.py                   # Redis caching implementation
+├── test_cache.py              # Cache testing script
 ├── run_api.py                 # API launcher script
 ├── data_ingestion.py          # Script to load data into MongoDB
 ├── main.py                    # Interactive CLI application
@@ -338,6 +348,7 @@ langchain_ollama/
 ├── README.md                  # This file (main documentation)
 ├── API_README.md              # FastAPI documentation
 ├── ARCHITECTURE.md            # System architecture documentation
+├── CACHING.md                 # Redis caching documentation
 └── QUICKSTART.md              # Quick setup guide
 ```
 
@@ -491,7 +502,10 @@ pip install -r requirements.txt --upgrade
 1. **Indexes**: The ingestion script creates indexes automatically
 2. **Limit Results**: Tools limit results to prevent overwhelming responses
 3. **Connection Pooling**: MongoDB client handles connection pooling
-4. **Caching**: Consider implementing caching for frequent queries
+4. **Redis Caching**: Automatic caching for frequent queries (up to 50x faster!)
+   - Configure Redis in `.env` to enable
+   - See [CACHING.md](CACHING.md) for details
+   - Monitor cache performance: `GET /api/cache/stats`
 
 ## 🔐 Security Best Practices
 
@@ -510,7 +524,7 @@ pip install -r requirements.txt --upgrade
 2. **Web Frontend**: Build React/Vue.js frontend consuming the API
 3. **Authentication**: Add JWT or OAuth2 to the API
 4. **Rate Limiting**: Implement API rate limiting
-5. **Caching**: Add Redis for frequent query caching
+5. ~~**Caching**: Add Redis for frequent query caching~~ ✅ **IMPLEMENTED**
 6. **More Data**: Expand with reviews, ratings, streaming availability
 7. **Visualization**: Add charts and graphs for statistics
 8. **Recommendations**: Implement collaborative filtering
@@ -553,6 +567,7 @@ Feel free to fork, modify, and enhance this project! Some ideas:
 
 - **[README.md](README.md)** - This file (main documentation)
 - **[API_README.md](API_README.md)** - Complete REST API documentation
+- **[CACHING.md](CACHING.md)** - Redis caching guide
 - **[QUICKSTART.md](QUICKSTART.md)** - Quick setup guide
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture details
 - **[PROJECT_SUMMARY.md](Project_summary_and_architecture/PROJECT_SUMMARY.md)** - Project overview

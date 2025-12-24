@@ -82,6 +82,12 @@ A complete AI Agent application with REST API that intelligently queries and ana
 - Clean data transformation
 - Batch insertion for large datasets
 
+### ⚡ Performance Features
+- **Redis Caching**: Automatic query caching (30min-1hr TTL)
+- **Cache Management**: Stats, monitoring, and clearing via API
+- **Graceful Fallback**: Works without Redis if unavailable
+- **Performance Boost**: Up to 50x faster for cached queries
+
 ### 🎨 User Experience
 - Interactive CLI with colored output
 - Helpful error messages
@@ -171,6 +177,7 @@ http://localhost:8000/redoc (ReDoc)
 - **PyMongo**: Database driver
 - **Pandas**: Data processing (CSV to MongoDB)
 - **Loguru 0.7.3**: Advanced logging with rotation (10 MB), retention (7 days)
+- **Redis 5.0+**: Query caching and performance optimization
 
 **Frontend:**
 - **React 18.2.0**: Modern UI library

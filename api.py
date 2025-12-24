@@ -119,7 +119,9 @@ async def home():
             'GET /api/movies/actor': 'Get movies with actor',
             'GET /api/movies/statistics': 'Get database statistics',
             'POST /api/query': 'Query the AI agent with natural language',
-            'GET /api/health': 'Health check endpoint'
+            'GET /api/health': 'Health check endpoint',
+            'GET /api/cache/stats': 'Get cache statistics',
+            'DELETE /api/cache/clear': 'Clear cache entries'
         }
     }
 
@@ -272,17 +274,51 @@ async def health_check():
     """
     Health check endpoint
     
-    Returns the status of the API, database connection, and agent
+    Returns the status of the API, database connection, agent, and cache
     """
     try:
         agent_instance = get_agent()
+        cache_stats = agent_instance.db_tools.cache.get_stats()
         return {
             'status': 'healthy',
             'database': 'connected',
-            'agent': 'ready'
+            'agent': 'ready',
+            'cache': cache_stats
         }
     except Exception as e:
         raise HTTPException(
             status_code=503,
             detail={'status': 'unhealthy', 'error': str(e)}
         )
+
+@app.get("/api/cache/stats")
+async def get_cache_stats():
+    """
+    Get Redis cache statistics
+    
+    Returns cache hit rate, memory usage, and key count
+    """
+    try:
+        agent_instance = get_agent()
+        stats = agent_instance.db_tools.cache.get_stats()
+        return stats
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/cache/clear")
+async def clear_cache(pattern: str = Query("movie_cache:*", description="Key pattern to clear")):
+    """
+    Clear cache entries matching a pattern
+    
+    - **pattern**: Redis key pattern (default: movie_cache:*)
+    """
+    try:
+        agent_instance = get_agent()
+        count = agent_instance.db_tools.cache.clear_pattern(pattern)
+        return {
+            'message': f'Cache cleared successfully',
+            'keys_deleted': count,
+            'pattern': pattern
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

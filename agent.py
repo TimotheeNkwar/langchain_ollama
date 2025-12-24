@@ -18,6 +18,7 @@ import json
 from typing import List, Dict, Any  
 from datetime import datetime
 from loguru import logger
+from cache import RedisCache, cache_result
 
 # Configure loguru for agent.py
 logger.remove()  # Remove default handler
@@ -71,7 +72,11 @@ class MovieDatabaseTools:
         
         # Collection for conversation history
         self.conversations = self.db['conversations']
+        
+        # Initialize Redis cache
+        self.cache = RedisCache()
 
+    @cache_result(ttl=1800, key_prefix="search_title")
     def search_movies_by_title(self, title: str) -> str:
         """Search for movies by title (case-insensitive partial match)
 
@@ -98,6 +103,7 @@ class MovieDatabaseTools:
             # In case of error (connection, query...), return message for debug
             return f"Error searching movies: {str(e)}"
 
+    @cache_result(ttl=3600, key_prefix="director")
     def get_movies_by_director(self, director: str) -> str:
         """Get all movies by a specific director
 
@@ -121,6 +127,7 @@ class MovieDatabaseTools:
             # Capture and return the error
             return f"Error getting movies by director: {str(e)}"
 
+    @cache_result(ttl=3600, key_prefix="top_rated")
     def get_top_rated_movies(self, limit: int = 10) -> str:
         """Get top rated movies from the database
 
@@ -144,6 +151,7 @@ class MovieDatabaseTools:
             # Return the error as plain text
             return f"Error getting top rated movies: {str(e)}"
 
+    @cache_result(ttl=3600, key_prefix="genre")
     def get_movies_by_genre(self, genre: str) -> str:
         """Get movies by genre (can be partial match)
 
@@ -189,6 +197,7 @@ class MovieDatabaseTools:
             # Error handling
             return f"Error getting movies by year range: {str(e)}"
 
+    @cache_result(ttl=3600, key_prefix="actor")
     def get_movies_with_actor(self, actor: str) -> str:
         """Get movies featuring a specific actor
 
