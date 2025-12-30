@@ -8,9 +8,9 @@ This file:
 - Sets up a LangChain ReAct (Reason + Act) agent that chooses the tools
 """
 
-from langchain.agents import create_agent 
-from langchain_ollama import ChatOllama  
-from langchain_core.tools import Tool 
+from langgraph.prebuilt import create_react_agent
+from langchain_ollama import ChatOllama
+from langchain_core.tools import tool 
 from pymongo import MongoClient 
 from dotenv import load_dotenv  
 import os  
@@ -379,78 +379,108 @@ class MovieAgent:
                 + "\n- ".join(init_errors)
             )
 
-        # Declare LangChain tools: each Tool has a name, a callable function, and a description.
-        # We clean the input (clean_input) to avoid annoying quotes.
+        # Declare LangChain tools as methods
+        # Define tools as wrapper functions
+        def search_movies_by_title_tool(title: str) -> str:
+            """Search for movies by title. Input should be a movie title or partial title."""
+            return self.db_tools.search_movies_by_title(self.clean_input(title))
+
+        def get_movies_by_director_tool(director: str) -> str:
+            """Get all movies by a specific director. Input should be the director's name."""
+            return self.db_tools.get_movies_by_director(self.clean_input(director))
+
+        def get_top_rated_movies_tool(limit: str = "10") -> str:
+            """Get top rated movies. Input should be the number of movies to return (default 10)."""
+            return self.db_tools.get_top_rated_movies(self.clean_input(limit))
+
+        def get_movies_by_genre_tool(genre: str) -> str:
+            """Get movies by genre. Input should be a genre like Action, Drama, Comedy, etc."""
+            return self.db_tools.get_movies_by_genre(self.clean_input(genre))
+
+        def get_movies_by_year_range_tool(year_range: str) -> str:
+            """Get movies within a year range. Input should be start_year, end_year (e.g., 1990, 2000)."""
+            years = [int(y.strip().strip("'\"")) for y in self.clean_input(year_range).split(",")]
+            return self.db_tools.get_movies_by_year_range(*years)
+
+        def get_movies_with_actor_tool(actor: str) -> str:
+            """Get movies featuring a specific actor. Input should be the actor's name."""
+            return self.db_tools.get_movies_with_actor(self.clean_input(actor))
+
+        def get_movie_statistics_tool(query: str = "") -> str:
+            """Get statistical information about the movie database. No input required, just use 'stats' as input."""
+            return self.db_tools.get_movie_statistics()
+
+        def advanced_search_tool(query: str) -> str:
+            """Advanced search across all movie fields. Use for complex queries about plot, themes, or combinations of criteria."""
+            return self.db_tools.advanced_search(self.clean_input(query))
+
+        # Apply @tool decorator
+        from langchain_core.tools import StructuredTool
+
         self.tools = [
-            Tool(
-                name="search_movies_by_title",  # name used by the agent in "Action:"
-                func=lambda x: self.db_tools.search_movies_by_title(self.clean_input(x)),  # cleaning wrapper
-                description="Search for movies by title. Input should be a movie title or partial title.",
+            StructuredTool.from_function(
+                func=search_movies_by_title_tool,
+                name="search_movies_by_title",
+                description="Search for movies by title. Input should be a movie title or partial title."
             ),
-            Tool(
+            StructuredTool.from_function(
+                func=get_movies_by_director_tool,
                 name="get_movies_by_director",
-                func=lambda x: self.db_tools.get_movies_by_director(self.clean_input(x)),
-                description="Get all movies by a specific director. Input should be the director's name.",
+                description="Get all movies by a specific director. Input should be the director's name."
             ),
-            Tool(
+            StructuredTool.from_function(
+                func=get_top_rated_movies_tool,
                 name="get_top_rated_movies",
-                func=lambda x: self.db_tools.get_top_rated_movies(self.clean_input(x)),
-                description="Get top rated movies. Input should be the number of movies to return (default 10).",
+                description="Get top rated movies. Input should be the number of movies to return (default 10)."
             ),
-            Tool(
+            StructuredTool.from_function(
+                func=get_movies_by_genre_tool,
                 name="get_movies_by_genre",
-                func=lambda x: self.db_tools.get_movies_by_genre(self.clean_input(x)),
-                description="Get movies by genre. Input should be a genre like Action, Drama, Comedy, etc.",
+                description="Get movies by genre. Input should be a genre like Action, Drama, Comedy, etc."
             ),
-            Tool(
+            StructuredTool.from_function(
+                func=get_movies_by_year_range_tool,
                 name="get_movies_by_year_range",
-                # Here the tool expects "start_year, end_year" separated by comma.
-                # We split on ',' then clean and convert each part to int.
-                func=lambda x: self.db_tools.get_movies_by_year_range(
-                    *[int(y.strip().strip("'\"")) for y in self.clean_input(x).split(",")]
-                ),
-                description="Get movies within a year range. Input should be start_year, end_year (e.g., 1990, 2000).",
+                description="Get movies within a year range. Input should be start_year, end_year (e.g., 1990, 2000)."
             ),
-            Tool(
+            StructuredTool.from_function(
+                func=get_movies_with_actor_tool,
                 name="get_movies_with_actor",
-                func=lambda x: self.db_tools.get_movies_with_actor(self.clean_input(x)),
-                description="Get movies featuring a specific actor. Input should be the actor's name.",
+                description="Get movies featuring a specific actor. Input should be the actor's name."
             ),
-            Tool(
+            StructuredTool.from_function(
+                func=get_movie_statistics_tool,
                 name="get_movie_statistics",
-                # Here the input is not used: we return global stats.
-                func=lambda x: self.db_tools.get_movie_statistics(),
-                description="Get statistical information about the movie database. No input required, just use 'stats' as input.",
+                description="Get statistical information about the movie database. No input required."
             ),
-            Tool(
+            StructuredTool.from_function(
+                func=advanced_search_tool,
                 name="advanced_search",
-                func=lambda x: self.db_tools.advanced_search(self.clean_input(x)),
-                description="Advanced search across all movie fields. Use for complex queries about plot, themes, or combinations of criteria.",
+                description="Advanced search across all movie fields. Use for complex queries about plot, themes, or combinations of criteria."
             ),
         ]
 
-        # System prompt for the agent (replaces the old template)
-        system_prompt = """You are a helpful assistant that answers questions about movies in the IMDB database.
+        # System prompt for the agent
+        self.system_prompt = """You are a helpful assistant that answers questions about movies in the IMDB database.
 
-You have access to tools to search and analyze movie data. Use the tools to find information, then provide a clear and helpful answer.
+You have access to tools to search and analyze movie data. Always use the appropriate tools to find information before answering.
 
-When using tools:
-- Use search_movies_by_title to find movies by name
-- Use get_movies_by_director to find movies by a specific director
-- Use get_top_rated_movies to find the highest rated movies
-- Use get_movies_by_genre to find movies of a specific genre
-- Use get_movies_by_year_range to find movies from a time period
-- Use get_movies_with_actor to find movies featuring an actor
-- Use get_movie_statistics to get overall database statistics
-- Use advanced_search for complex queries across all fields
+Available tools:
+- search_movies_by_title: Find movies by title
+- get_movies_by_director: Find movies by director name
+- get_top_rated_movies: Get highest rated movies
+- get_movies_by_genre: Filter by genre
+- get_movies_by_year_range: Filter by release year
+- get_movies_with_actor: Find movies with specific actors
+- get_movie_statistics: Get database statistics (includes top directors!)
+- advanced_search: Complex queries across all fields
 
-IMPORTANT: Never show function calls or tool names in your responses (like 'get_movies_by_director("Christopher Nolan")'). Only provide the final results in a natural, conversational way."""
+IMPORTANT: You MUST CALL the tools to get data, not just describe how to use them. After getting results, present them naturally without showing function calls."""
 
-        # Create the agent using the new LangChain 1.0+ API
-        self.agent = create_agent(
-            model=self.llm,  # the LLM model
-            tools=self.tools,  # the declared tools
-            system_prompt=system_prompt,  # instructions for the agent
+        # Create the agent using LangGraph (no state_modifier in newer versions)
+        self.agent = create_react_agent(
+            model=self.llm,
+            tools=self.tools,
         )
     
     def _load_conversation_history(self) -> List[Dict[str, str]]:
@@ -525,22 +555,27 @@ IMPORTANT: Never show function calls or tool names in your responses (like 'get_
             final output from the agent (string)
         """
         try:
+            from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+
             # Save user question to history
             self._save_message("user", question)
-            
+
             # Build messages with conversation history
             messages = []
-            
+
+            # Add system prompt as first message
+            messages.append(SystemMessage(content=self.system_prompt))
+
             # Add conversation history (for context)
             for msg in self.conversation_history[:-1]:  # Exclude the just-added user message
-                messages.append({
-                    "role": msg["role"],
-                    "content": msg["content"]
-                })
-            
+                if msg["role"] == "user":
+                    messages.append(HumanMessage(content=msg["content"]))
+                elif msg["role"] == "assistant":
+                    messages.append(AIMessage(content=msg["content"]))
+
             # Add current question
-            messages.append({"role": "user", "content": question})
-            
+            messages.append(HumanMessage(content=question))
+
             # In LangChain 1.0+, the agent is invoked with messages
             result = self.agent.invoke({"messages": messages})
             

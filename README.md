@@ -102,7 +102,7 @@ ollama list
 ### 4. Install Python Dependencies
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
 **Dependencies include:**
@@ -111,6 +111,8 @@ pip install -r requirements.txt
 - pymongo==4.6.1 (MongoDB driver)
 - loguru>=0.7.2 (Advanced logging with rotation)
 - redis>=5.0.0 (Query caching)
+
+**Note:** This project uses [uv](https://docs.astral.sh/uv/) for fast, reliable dependency management.
 
 ### 5. Configure Environment Variables
 
@@ -139,9 +141,9 @@ MONGODB_DATABASE=langchain_db
 MONGODB_COLLECTION=movies
 
 # Redis Cache Configuration (Optional - app works without it)
-REDIS_HOST=redis-15597.c82.us-east-1-2.ec2.cloud.redislabs.com
+REDIS_HOST=xxxxxxxxxxxxxxxxxxxxxxxxxxx
 REDIS_PORT=15597
-REDIS_PASSWORD=your_redis_password_here
+REDIS_PASSWORD=xxxxxxxxxxxxxxxxxx
 REDIS_DB=0
 ```
 
@@ -494,7 +496,7 @@ self.collection.aggregate([
 
 **Solutions:**
 ```bash
-pip install -r requirements.txt --upgrade
+uv sync
 ```
 
 ## 📈 Performance Tips
