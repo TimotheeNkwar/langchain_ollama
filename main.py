@@ -32,9 +32,9 @@ def print_banner():
     banner = """
     ╔═══════════════════════════════════════════════════════════╗
     ║                                                           ║
-    ║          🎬 IMDB Movie AI Agent with LangChain 🎬        ║
+    ║          🎬 IMDB Movie AI Agent with LangChain 🎬         ║
     ║                                                           ║
-    ║       Powered by MongoDB, LangChain, and Ollama          ║
+    ║       Powered by MongoDB, LangChain, and Ollama           ║
     ║                                                           ║
     ╚═══════════════════════════════════════════════════════════╝
     """
@@ -116,7 +116,7 @@ def main():
 
                 # Handle commands
                 if user_input.lower() in ['exit', 'quit', 'q']:
-                    logger.info("\n👋 Thank you for using Movie AI Agent! Goodbye!")
+                    logger.info("\nThank you for using Movie AI Agent! Goodbye!")
                     break
 
                 if user_input.lower() == 'help':
@@ -132,7 +132,7 @@ def main():
                 logger.info("\n\n👋 Interrupted. Goodbye!")
                 break
             except Exception as e:
-                logger.error(f"\n❌ Error: {str(e)}")
+                logger.error(f"\nError: {str(e)}")
                 logger.info("Please try again or type 'help' for examples.")
     finally:
         # Cleanup
