@@ -11,6 +11,7 @@ A beautiful, responsive web interface that combines traditional search with cutt
 ## 🌟 Demo
 
 **Key Features at a Glance:**
+
 - 🎯 **Smart Search** - Find movies by title, director, actor, or genre instantly
 - 🤖 **AI Chat Assistant** - Ask questions in natural language ("Best sci-fi from the 2010s?")
 - 🎨 **Beautiful UI** - Netflix-inspired dark theme with smooth animations
@@ -21,12 +22,14 @@ A beautiful, responsive web interface that combines traditional search with cutt
 ## 🎨 Features
 
 ### 🔍 Advanced Movie Search
+
 - **Multiple Search Modes**: Title, Director, Actor, Genre with instant switching
 - **Advanced Filters**: Combine genre, year range (1900-2025), min rating, director, and actor
 - **Smart Results**: Beautiful movie cards with posters, ratings, and metadata
 - **Real-time Feedback**: Loading states and helpful error messages
 
 ### 🤖 AI Assistant
+
 - **Natural Language Queries**: Just ask like talking to a friend
 - **Conversation History**: The AI remembers context within the chat
 - **Quick Suggestions**: Pre-made queries to get you started
@@ -34,6 +37,7 @@ A beautiful, responsive web interface that combines traditional search with cutt
 - **Typing Indicators**: See when the AI is "thinking"
 
 ### 🎬 Movie Display
+
 - **High-Quality Posters**: TMDB poster images with fallback placeholders
 - **Rich Metadata**: Title, year, rating, director, genres, runtime, overview
 - **Color-Coded Ratings**: Green (7+), Orange (5-7), Red (<5)
@@ -41,6 +45,7 @@ A beautiful, responsive web interface that combines traditional search with cutt
 - **Responsive Grid**: Adapts from 1 to 5 columns based on screen size
 
 ### 📊 Statistics Dashboard
+
 - **Live Stats**: Total movies, directors, and genres in the header
 - **Database Insights**: Access comprehensive movie database analytics
 - **Visual Appeal**: Animated stats counter on load
@@ -48,6 +53,7 @@ A beautiful, responsive web interface that combines traditional search with cutt
 ## 🛠️ Technology Stack
 
 ### Core Technologies
+
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | **React** | 18.2.0 | Modern UI library with hooks and concurrent features |
@@ -72,6 +78,7 @@ Before you begin, ensure you have:
 - ✅ **MongoDB** with movie data loaded - See [Quick Start](../QUICKSTART.md)
 
 **Quick Check:**
+
 ```bash
 node --version  # Should be 16+
 npm --version   # Should be 8+
@@ -87,6 +94,7 @@ npm install
 ```
 
 **What gets installed:**
+
 - React & React DOM (~500 KB)
 - Vite & plugins (~10 MB)
 - Axios (~200 KB)
@@ -100,6 +108,7 @@ npm run dev
 ```
 
 **Expected output:**
+
 ```
   VITE v5.0.8  ready in 342 ms
 
@@ -131,6 +140,7 @@ Test the production build locally before deployment.
 To run the complete application:
 
 **Terminal 1 - Backend API:**
+
 ```bash
 # From project root
 cd c:\Users\timot\Documents\GitHub\langchain_ollama
@@ -141,6 +151,7 @@ uvicorn api:app --reload
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
 # From project root
 cd frontend
@@ -150,6 +161,7 @@ npm run dev
 ```
 
 **Terminal 3 - MongoDB (if not running as service):**
+
 ```bash
 mongod --dbpath C:\data\db
 ```
@@ -186,12 +198,14 @@ frontend/
 ### 🔍 Search Movies
 
 **Simple Search:**
+
 1. Select search type: **Title** / **Director** / **Actor** / **Genre**
 2. Type your search query (e.g., "Batman", "Nolan", "DiCaprio")
 3. Click **Search** or press Enter
 4. Browse results in a beautiful grid
 
 **Advanced Filters:**
+
 1. Click **🔽 Advanced Filters** button
 2. Combine multiple criteria:
    - **Genre**: Action, Drama, Comedy, Sci-Fi, etc.
@@ -205,11 +219,13 @@ frontend/
 ### 💬 AI Assistant
 
 **Quick Start:**
+
 1. Click the **🤖 AI Assistant** tab
 2. Type a natural language question
 3. Press Enter or click **Send**
 
 **Example Queries:**
+
 ```
 ✨ "Show me sci-fi movies from the 2010s"
 ✨ "Find movies directed by Christopher Nolan"
@@ -221,6 +237,7 @@ frontend/
 ```
 
 **Pro Tips:**
+
 - Use the **suggestion chips** for inspiration
 - The AI remembers conversation context
 - Responses include movie lists when relevant
@@ -254,6 +271,7 @@ The app uses **CSS Variables** for easy theming. All colors and spacing can be c
 **Creating Your Own Theme:**
 
 1. **Blue Theme Example:**
+
 ```css
 :root {
   --primary-color: #0066ff;
@@ -262,7 +280,8 @@ The app uses **CSS Variables** for easy theming. All colors and spacing can be c
 }
 ```
 
-2. **Light Theme Example:**
+1. **Light Theme Example:**
+
 ```css
 :root {
   --primary-color: #e50914;
@@ -374,6 +393,7 @@ VITE_PORT=3000
 ```
 
 **Usage in code:**
+
 ```javascript
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 ```
@@ -403,9 +423,11 @@ export default defineConfig({
 **Problem:** `Network Error` or `ERR_CONNECTION_REFUSED`
 
 **Solutions:**
+
 1. ✅ Ensure backend is running: `uvicorn api:app --reload`
 2. ✅ Check backend URL: Should be `http://localhost:8000`
 3. ✅ Verify CORS is enabled in [api.py](../api.py):
+
    ```python
    app.add_middleware(
        CORSMiddleware,
@@ -414,6 +436,7 @@ export default defineConfig({
        allow_headers=["*"],
    )
    ```
+
 4. ✅ Check proxy config in [vite.config.js](vite.config.js)
 5. ✅ Try accessing API directly: `http://localhost:8000/api/health`
 
@@ -422,6 +445,7 @@ export default defineConfig({
 **Problem:** `Module not found` or dependency errors
 
 **Solution:**
+
 ```bash
 # Clear cache and reinstall
 rm -rf node_modules package-lock.json
@@ -440,13 +464,15 @@ npm install
 **Solutions:**
 
 1. **Change port in vite.config.js:**
+
 ```javascript
 server: {
   port: 3001  // Use different port
 }
 ```
 
-2. **Kill process using port 3000:**
+1. **Kill process using port 3000:**
+
 ```bash
 # Windows
 netstat -ano | findstr :3000
@@ -461,6 +487,7 @@ lsof -ti:3000 | xargs kill -9
 **Problem:** App is slow or laggy
 
 **Solutions:**
+
 1. ✅� Related
 
 - 📖 [Backend API Documentation](../API_README.md) - REST API endpoints
@@ -474,18 +501,21 @@ lsof -ti:3000 | xargs kill -9
 Need help? Here's how to get support:
 
 ### Common Issues
+
 1. Check the [Troubleshooting](#-troubleshooting) section above
 2. Review [backend API logs](../api.py) for errors
 3. Check MongoDB connection and data
 4. Verify Ollama is running (`ollama list`)
 
 ### Getting Help
+
 - 📧 **Issues**: Open a [GitHub Issue](../../issues)
 - 💬 **Discussions**: Join [GitHub Discussions](../../discussions)
 - 📖 **Documentation**: Read the [main README](../README.md)
 - 🐛 **Bug Reports**: Include browser, error message, and steps to reproduce
 
 ### Before Asking
+
 - ✅ Check if backend API is running
 - ✅ Look at browser console for errors (F12)
 - ✅ Check Network tab for failed requests
@@ -497,6 +527,7 @@ Need help? Here's how to get support:
 ## 🎉 Acknowledgments
 
 Built with amazing open-source technologies:
+
 - [React](https://react.dev/) - UI library
 - [Vite](https://vitejs.dev/) - Build tool
 - [Axios](https://axios-http.com/) - HTTP client
@@ -520,6 +551,7 @@ MIT License - See [LICENSE](../LICENSE) file for details
 </div>e
 
 **Check:**
+
 1. ✅ Backend API is running
 2. ✅ Ollama is running: `ollama list`
 3. ✅ Mistral model is available: `ollama pull mistral`
@@ -589,6 +621,7 @@ vercel --prod
 ```
 
 **vercel.json:**
+
 ```json
 {
   "rewrites": [
@@ -610,6 +643,7 @@ netlify deploy --prod --dir=dist
 ```
 
 **netlify.toml:**
+
 ```toml
 [build]
   command = "npm run build"
@@ -629,6 +663,7 @@ netlify deploy --prod --dir=dist
 ### Docker
 
 **Dockerfile:**
+
 ```dockerfile
 # Build stage
 FROM node:18-alpine AS builder
@@ -647,6 +682,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 
 **nginx.conf:**
+
 ```nginx
 server {
     listen 80;
@@ -661,6 +697,7 @@ server {
 ```
 
 **Build and run:**
+
 ```bash
 docker build -t movie-frontend .
 docker run -p 3000:80 movie-frontend
@@ -701,6 +738,7 @@ npm run build
 ### Browser Testing
 
 Tested on:
+
 - ✅ Chrome 120+ (Recommended)
 - ✅ Firefox 120+
 - ✅ Safari 17+
@@ -735,16 +773,19 @@ Tested on:
 ## 📚 Resources
 
 ### Official Documentation
+
 - [React Docs](https://react.dev/) - React 18 documentation
 - [Vite Guide](https://vitejs.dev/guide/) - Vite configuration guide
 - [Axios Docs](https://axios-http.com/) - HTTP client documentation
 
 ### Learning Resources
+
 - [React Tutorial](https://react.dev/learn) - Official React tutorial
 - [Vite Features](https://vitejs.dev/guide/features.html) - Learn about Vite
 - [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/--*) - Theming guide
 
 ### Related Projects
+
 - [TMDB API](https://www.themoviedb.org/documentation/api) - Movie database API
 - [FastAPI](https://fastapi.tiangolo.com/) - Backend framework
 - [LangChain](https://python.langchain.com/) - AI agent framework
@@ -801,6 +842,7 @@ MIT License - See LICENSE file for details
 ## 💬 Support
 
 For issues or questions:
+
 - Check the [main README](../README.md)
 - Review backend API docs
 - Check backend logs for API errors
