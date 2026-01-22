@@ -19,7 +19,7 @@ class RedisCache:
     
     def __init__(self):
         """Initialize Redis connection"""
-        redis_host = os.getenv('REDIS_HOST', 'redis-15597.c82.us-east-1-2.ec2.cloud.redislabs.com')
+        redis_host = os.getenv('REDIS_HOST')
         redis_port = int(os.getenv('REDIS_PORT', '15597'))
         redis_password = os.getenv('REDIS_PASSWORD', '')
         redis_db = int(os.getenv('REDIS_DB', '0'))
@@ -37,9 +37,9 @@ class RedisCache:
             # Test connection
             self.client.ping()
             self.enabled = True
-            logger.info(f"✅ Redis cache connected: {redis_host}:{redis_port}")
+            logger.info(f"Redis cache connected: {redis_host}:{redis_port}")
         except Exception as e:
-            logger.warning(f"⚠️ Redis connection failed: {e}. Caching disabled.")
+            logger.warning(f"Redis connection failed: {e}. Caching disabled.")
             self.client = None
             self.enabled = False
     
@@ -59,9 +59,9 @@ class RedisCache:
         try:
             value = self.client.get(key)
             if value:
-                logger.debug(f"🎯 Cache HIT: {key}")
+                logger.debug(f"Cache HIT: {key}")
                 return json.loads(value)
-            logger.debug(f"❌ Cache MISS: {key}")
+            logger.debug(f"Cache MISS: {key}")
             return None
         except Exception as e:
             logger.warning(f"Cache get error: {e}")
@@ -75,7 +75,7 @@ class RedisCache:
         try:
             serialized = json.dumps(value, default=str)
             self.client.setex(key, ttl, serialized)
-            logger.debug(f"💾 Cache SET: {key} (TTL: {ttl}s)")
+            logger.debug(f"Cache SET: {key} (TTL: {ttl}s)")
             return True
         except Exception as e:
             logger.warning(f"Cache set error: {e}")
@@ -88,7 +88,7 @@ class RedisCache:
         
         try:
             self.client.delete(key)
-            logger.debug(f"🗑️ Cache DELETE: {key}")
+            logger.debug(f"Cache DELETE: {key}")
             return True
         except Exception as e:
             logger.warning(f"Cache delete error: {e}")
@@ -103,7 +103,7 @@ class RedisCache:
             keys = self.client.keys(pattern)
             if keys:
                 count = self.client.delete(*keys)
-                logger.info(f"🧹 Cleared {count} cache entries matching '{pattern}'")
+                logger.info(f"Cleared {count} cache entries matching '{pattern}'")
                 return count
             return 0
         except Exception as e:
