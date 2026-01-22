@@ -25,6 +25,14 @@ wheels = [
 ]
 
 [[package]]
+name = "celeste"
+version = "1.0a2"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/24/e6/99404166eeb21d42e157c33a058d90022599b13ff296c82ad81330f4864f/celeste-1.0a2-py3-none-any.whl", hash = "sha256:ea0baefcad33a1620060a2bac6ccee8c04eb5c55b040f954cf4f96f0e89267d1", size = 3018, upload-time = "2023-06-22T03:05:58.703Z" },
+]
+
+[[package]]
 name = "certifi"
 version = "2026.1.4"
 source = { registry = "https://pypi.org/simple" }
@@ -84,11 +92,15 @@ name = "langchain-ollama"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "celeste" },
     { name = "ollama" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "ollama", specifier = ">=0.6.1" }]
+requires-dist = [
+    { name = "celeste", specifier = ">=1.0a2" },
+    { name = "ollama", specifier = ">=0.6.1" },
+]
 
 [[package]]
 name = "ollama"

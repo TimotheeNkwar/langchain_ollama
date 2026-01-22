@@ -4,5 +4,6 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.11"
 dependencies = [
+    "celeste>=1.0a2",
     "ollama>=0.6.1",
 ]
