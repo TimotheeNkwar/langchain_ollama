@@ -10,10 +10,6 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Set environment variables
-os.environ['API_HOST'] = os.getenv('API_HOST', '0.0.0.0')
-os.environ['API_PORT'] = os.getenv('API_PORT', '8000')
-os.environ['API_DEBUG'] = os.getenv('API_DEBUG', 'True')
 if __name__ == "__main__":
     uvicorn.run(
         "api:app",
