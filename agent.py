@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 import os  
 import json  
 from typing import List, Dict, Any  
+from langchain.agents import create_agent
 from datetime import datetime
 from loguru import logger
 from cache import RedisCache, cache_result
@@ -363,7 +364,7 @@ class MovieAgent:
                 )
 
                 # Log which model was selected
-                logger.info(f"✅ Using Ollama model: {model_name} ({ollama_base_url})")
+                logger.info(f"Using Ollama model: {model_name} ({ollama_base_url})")
 
                 # Exit the loop as soon as we have an LLM
                 break
@@ -478,7 +479,7 @@ Available tools:
 IMPORTANT: You MUST CALL the tools to get data, not just describe how to use them. After getting results, present them naturally without showing function calls."""
 
         # Create the agent using LangGraph (no state_modifier in newer versions)
-        self.agent = create_react_agent(
+        self.agent = create_agent(
             model=self.llm,
             tools=self.tools,
         )

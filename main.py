@@ -83,14 +83,14 @@ def main():
     load_dotenv()
 
     print_banner()
-    logger.info("\n🚀 Initializing AI Agent...")
+    logger.info("\nInitializing AI Agent...")
 
     agent = None
     try:
         agent = MovieAgent()
-        logger.info("✅ Agent initialized successfully!\n")
+        logger.info("Agent initialized successfully!\n")
     except Exception as e:
-        logger.error(f"❌ Error initializing agent: {str(e)}")
+        logger.error(f"Error initializing agent: {str(e)}")
         logger.info("\nMake sure:")
         logger.info("1. MongoDB is running and accessible")
         logger.info("2. You've run data_ingestion.py to load the data")
@@ -100,7 +100,7 @@ def main():
 
     print_help()
     logger.info("\n" + "="*60)
-    logger.info("💬 Start chatting with the Movie AI Agent!")
+    logger.info("Start chatting with the Movie AI Agent!")
     logger.info("="*60 + "\n")
 
     # Main interaction loop
@@ -108,7 +108,7 @@ def main():
         while True:
             try:
                 # Get user input
-                user_input = input("\n🎬 You: ").strip()
+                user_input = input("\nYou: ").strip()
 
                 # Handle empty input
                 if not user_input:
@@ -124,12 +124,12 @@ def main():
                     continue
 
                 # Query the agent
-                logger.info("\n🤖 Agent: ")
+                logger.info("\nAgent: ")
                 response = agent.query(user_input)
                 logger.info(response)
 
             except KeyboardInterrupt:
-                logger.info("\n\n👋 Interrupted. Goodbye!")
+                logger.info("\n\nInterrupted. Goodbye!")
                 break
             except Exception as e:
                 logger.error(f"\nError: {str(e)}")
@@ -138,7 +138,7 @@ def main():
         # Cleanup
         if agent:
             agent.close()
-            logger.info("\n✅ Agent closed successfully.")
+            logger.info("\nAgent closed successfully.")
 
     return 0
 
