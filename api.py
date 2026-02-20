@@ -51,17 +51,17 @@ async def lifespan(app: FastAPI):
     """Lifespan event handler for startup and shutdown"""
     # Startup
     logger.info("\n" + "="*60)
-    logger.info("🚀 Starting IMDB Movie AI Agent API (FastAPI)")
+    logger.info("Starting IMDB Movie AI Agent API (FastAPI)")
     logger.info("="*60)
-    logger.info("\n📍 Access URLs:")
+    logger.info("\nAccess URLs:")
     logger.info("   - Local:     http://localhost:8000/")
     logger.info("   - Network:   http://192.168.x.x:8000/")
     logger.info("   - Swagger:   http://localhost:8000/docs")
     logger.info("   - ReDoc:     http://localhost:8000/redoc")
-    logger.info("\n📖 Examples:")
+    logger.info("\nExamples:")
     logger.info("   - Search:    http://localhost:8000/api/movies/search?title=batman")
     logger.info("   - Health:    http://localhost:8000/api/health")
-    logger.info("\n💡 Interactive API docs available at /docs")
+    logger.info("\nInteractive API docs available at /docs")
     logger.info("="*60 + "\n")
     
     yield
@@ -71,11 +71,11 @@ async def lifespan(app: FastAPI):
     if agent is not None:
         agent.close()
         agent = None
-        logger.info("\n✅ Agent closed successfully.")
+        logger.info("\nAgent closed successfully.")
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="🎬 IMDB Movie AI Agent API",
+    title="IMDB Movie AI Agent API",
     description="REST API to query movie database using AI Agent",
     version="1.0.0",
     docs_url="/docs",
@@ -104,7 +104,7 @@ class QueryResponse(BaseModel):
 async def home():
     """Home endpoint with API documentation"""
     return {
-        'message': '🎬 IMDB Movie AI Agent API',
+        'message': 'IMDB Movie AI Agent API',
         'version': '1.0.0',
         'documentation': {
             'swagger_ui': '/docs',
