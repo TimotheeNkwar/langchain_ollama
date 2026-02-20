@@ -1,4 +1,4 @@
-# 🎬 TMDB Movie AI Agent - Frontend
+# TMDB Movie AI Agent - Frontend
 
 > A modern, Netflix-inspired React application for exploring 50,000+ movies with AI-powered search and recommendations.
 
@@ -8,27 +8,27 @@
 
 A beautiful, responsive web interface that combines traditional search with cutting-edge AI assistance to help you discover movies. Built with React 18, Vite, and styled with a sleek Netflix-inspired dark theme.
 
-## 🌟 Demo
+## Demo
 
 **Key Features at a Glance:**
 
-- 🎯 **Smart Search** - Find movies by title, director, actor, or genre instantly
-- 🤖 **AI Chat Assistant** - Ask questions in natural language ("Best sci-fi from the 2010s?")
-- 🎨 **Beautiful UI** - Netflix-inspired dark theme with smooth animations
-- 📊 **Live Statistics** - Real-time database stats (50k+ movies, directors, genres)
-- 🔥 **Blazing Fast** - Vite HMR for instant updates during development
-- 📱 **Fully Responsive** - Perfect on desktop, tablet, and mobile
+- **Smart Search** - Find movies by title, director, actor, or genre instantly
+- **AI Chat Assistant** - Ask questions in natural language ("Best sci-fi from the 2010s?")
+- **Beautiful UI** - Netflix-inspired dark theme with smooth animations
+- **Live Statistics** - Real-time database stats (50k+ movies, directors, genres)
+- **Blazing Fast** - Vite HMR for instant updates during development
+- **Fully Responsive** - Perfect on desktop, tablet, and mobile
 
-## 🎨 Features
+## Features
 
-### 🔍 Advanced Movie Search
+### Advanced Movie Search
 
 - **Multiple Search Modes**: Title, Director, Actor, Genre with instant switching
 - **Advanced Filters**: Combine genre, year range (1900-2025), min rating, director, and actor
 - **Smart Results**: Beautiful movie cards with posters, ratings, and metadata
 - **Real-time Feedback**: Loading states and helpful error messages
 
-### 🤖 AI Assistant
+### AI Assistant
 
 - **Natural Language Queries**: Just ask like talking to a friend
 - **Conversation History**: The AI remembers context within the chat
@@ -36,7 +36,7 @@ A beautiful, responsive web interface that combines traditional search with cutt
 - **Rich Responses**: Formatted answers with movie lists and recommendations
 - **Typing Indicators**: See when the AI is "thinking"
 
-### 🎬 Movie Display
+### Movie Display
 
 - **High-Quality Posters**: TMDB poster images with fallback placeholders
 - **Rich Metadata**: Title, year, rating, director, genres, runtime, overview
@@ -44,13 +44,13 @@ A beautiful, responsive web interface that combines traditional search with cutt
 - **Hover Effects**: Smooth animations and card elevation
 - **Responsive Grid**: Adapts from 1 to 5 columns based on screen size
 
-### 📊 Statistics Dashboard
+### Statistics Dashboard
 
 - **Live Stats**: Total movies, directors, and genres in the header
 - **Database Insights**: Access comprehensive movie database analytics
 - **Visual Appeal**: Animated stats counter on load
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Core Technologies
 
@@ -68,14 +68,14 @@ A beautiful, responsive web interface that combines traditional search with cutt
 **Axios** - Better than fetch API with interceptors, auto-transform, and better error handling  
 **CSS Variables** - Easy theming and consistent design system
 
-## 📦 Prerequisites
+## Prerequisites
 
 Before you begin, ensure you have:
 
-- ✅ **Node.js 16+** (18+ recommended) - [Download here](https://nodejs.org/)
-- ✅ **npm** or **yarn** - Comes with Node.js
-- ✅ **Backend API running** on `http://localhost:8000` - [Setup guide](../README.md)
-- ✅ **MongoDB** with movie data loaded - See [Quick Start](../QUICKSTART.md)
+- **Node.js 16+** (18+ recommended) - [Download here](https://nodejs.org/)
+- **npm** or **yarn** - Comes with Node.js
+- **Backend API running** on `http://localhost:8000` - [Setup guide](../README.md)
+- **MongoDB** with movie data loaded - See [Quick Start](../QUICKSTART.md)
 
 **Quick Check:**
 
@@ -84,9 +84,9 @@ node --version  # Should be 16+
 npm --version   # Should be 8+
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1️⃣ Install Dependencies
+### 1. Install Dependencies
 
 ```bash
 cd frontend
@@ -101,7 +101,7 @@ npm install
 - React Icons (~5 MB)
 - Total: ~15 MB (node_modules will be ~200 MB with all deps)
 
-### 2️⃣ Start Development Server
+### 2. Start Development Server
 
 ```bash
 npm run dev
@@ -117,9 +117,9 @@ npm run dev
   ➜  press h + enter to show help
 ```
 
-🎉 Open `http://localhost:3000` in your browser!
+Open `http://localhost:3000` in your browser!
 
-### 3️⃣ Build for Production
+### 3. Build for Production
 
 ```bash
 npm run build
@@ -127,7 +127,7 @@ npm run build
 
 Production files will be in the `dist/` folder (~500 KB gzipped).
 
-### 4️⃣ Preview Production Build
+### 4. Preview Production Build
 
 ```bash
 npm run preview
@@ -135,7 +135,7 @@ npm run preview
 
 Test the production build locally before deployment.
 
-## 🏗️ Full Stack Setup
+## Full Stack Setup
 
 To run the complete application:
 
@@ -166,12 +166,12 @@ npm run dev
 mongod --dbpath C:\data\db
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 frontend/
-├── 📂 src/
-│   ├── 📂 components/          # React components
+├── src/
+│   ├── components/          # React components
 │   │   ├── MovieCard.jsx       # Individual movie card with poster
 │   │   ├── MovieCard.css       # Card styling with hover effects
 │   │   ├── MovieList.jsx       # Grid layout for movies
@@ -180,22 +180,22 @@ frontend/
 │   │   ├── MovieSearch.css     # Search UI styling
 │   │   ├── AIChat.jsx          # AI chat interface
 │   │   └── AIChat.css          # Chat bubble styling
-│   ├── 📂 services/
+│   ├── services/
 │   │   └── api.js              # Axios API client (all endpoints)
 │   ├── App.jsx                 # Main app with routing & state
 │   ├── App.css                 # App-level styling
 │   ├── main.jsx                # React entry point
 │   └── index.css               # Global styles & CSS variables
-├── 📄 index.html               # HTML template
-├── ⚙️ vite.config.js           # Vite config with proxy
-├── 📦 package.json             # Dependencies & scripts
-├── 📝 README.md                # This file
-└── 🚫 .gitignore               # Git ignore rules
+├── index.html               # HTML template
+├── vite.config.js           # Vite config with proxy
+├── package.json             # Dependencies & scripts
+├── README.md                # This file
+└── .gitignore               # Git ignore rules
 ```
 
-## 🎯 Usage
+## Usage
 
-### 🔍 Search Movies
+### Search Movies
 
 **Simple Search:**
 
@@ -216,7 +216,7 @@ frontend/
 3. Click **Search** to apply filters
 4. Click **Reset** to clear all filters
 
-### 💬 AI Assistant
+### AI Assistant
 
 **Quick Start:**
 
@@ -227,13 +227,13 @@ frontend/
 **Example Queries:**
 
 ```
-✨ "Show me sci-fi movies from the 2010s"
-✨ "Find movies directed by Christopher Nolan"
-✨ "What are some highly rated action movies?"
-✨ "Recommend movies similar to Inception"
-✨ "Best movies of 2023"
-✨ "Movies with Tom Hanks"
-✨ "Action movies from the 90s"
+"Show me sci-fi movies from the 2010s"
+"Find movies directed by Christopher Nolan"
+"What are some highly rated action movies?"
+"Recommend movies similar to Inception"
+"Best movies of 2023"
+"Movies with Tom Hanks"
+"Action movies from the 90s"
 ```
 
 **Pro Tips:**
@@ -243,7 +243,7 @@ frontend/
 - Responses include movie lists when relevant
 - Click on the search tab to see full results
 
-## 🎨 Theming & Customization
+## Theming & Customization
 
 The app uses **CSS Variables** for easy theming. All colors and spacing can be customized in [src/index.css](src/index.css):
 
@@ -292,7 +292,7 @@ The app uses **CSS Variables** for easy theming. All colors and spacing can be c
 }
 ```
 
-## 📱 API Integration
+## API Integration
 
 ### API Service Layer
 
@@ -301,31 +301,31 @@ All API calls are centralized in [src/services/api.js](src/services/api.js) usin
 ```javascript
 import movieAPI from './services/api';
 
-// ✅ Search movies by title
+// Search movies by title
 const movies = await movieAPI.searchMovies('Inception');
 
-// ✅ Get top rated movies
+// Get top rated movies
 const topMovies = await movieAPI.getTopMovies(20);
 
-// ✅ Get movies by director
+// Get movies by director
 const nolanMovies = await movieAPI.getMoviesByDirector('Christopher Nolan');
 
-// ✅ Get movies by genre
+// Get movies by genre
 const sciFiMovies = await movieAPI.getMoviesByGenre('Science Fiction');
 
-// ✅ Get movies by year range
+// Get movies by year range
 const nineties = await movieAPI.getMoviesByYearRange(1990, 1999);
 
-// ✅ Get movies with actor
+// Get movies with actor
 const hanksMovies = await movieAPI.getMoviesWithActor('Tom Hanks');
 
-// ✅ Get database statistics
+// Get database statistics
 const stats = await movieAPI.getStatistics();
 
-// ✅ Natural language AI query
+// Natural language AI query
 const result = await movieAPI.queryAgent('best sci-fi movies');
 
-// ✅ Health check
+// Health check
 const health = await movieAPI.checkHealth();
 ```
 
@@ -414,19 +414,19 @@ export default defineConfig({
 })
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues & Solutions
 
-#### ❌ API Connection Issues
+#### API Connection Issues
 
 **Problem:** `Network Error` or `ERR_CONNECTION_REFUSED`
 
 **Solutions:**
 
-1. ✅ Ensure backend is running: `uvicorn api:app --reload`
-2. ✅ Check backend URL: Should be `http://localhost:8000`
-3. ✅ Verify CORS is enabled in [api.py](../api.py):
+1. Ensure backend is running: `uvicorn api:app --reload`
+2. Check backend URL: Should be `http://localhost:8000`
+3. Verify CORS is enabled in [api.py](../api.py):
 
    ```python
    app.add_middleware(
@@ -437,10 +437,10 @@ export default defineConfig({
    )
    ```
 
-4. ✅ Check proxy config in [vite.config.js](vite.config.js)
-5. ✅ Try accessing API directly: `http://localhost:8000/api/health`
+4. Check proxy config in [vite.config.js](vite.config.js)
+5. Try accessing API directly: `http://localhost:8000/api/health`
 
-#### ❌ Build Errors
+#### Build Errors
 
 **Problem:** `Module not found` or dependency errors
 
@@ -457,13 +457,13 @@ del package-lock.json
 npm install
 ```
 
-#### ❌ Port Already in Use
+#### Port Already in Use
 
 **Problem:** `Port 3000 is already in use`
 
 **Solutions:**
 
-1. **Change port in vite.config.js:**
+1. Change port in vite.config.js:
 
 ```javascript
 server: {
@@ -509,18 +509,18 @@ Need help? Here's how to get support:
 
 ### Getting Help
 
-- 📧 **Issues**: Open a [GitHub Issue](../../issues)
-- 💬 **Discussions**: Join [GitHub Discussions](../../discussions)
-- 📖 **Documentation**: Read the [main README](../README.md)
-- 🐛 **Bug Reports**: Include browser, error message, and steps to reproduce
+- **Issues**: Open a [GitHub Issue](../../issues)
+- **Discussions**: Join [GitHub Discussions](../../discussions)
+- **Documentation**: Read the [main README](../README.md)
+- **Bug Reports**: Include browser, error message, and steps to reproduce
 
 ### Before Asking
 
-- ✅ Check if backend API is running
-- ✅ Look at browser console for errors (F12)
-- ✅ Check Network tab for failed requests
-- ✅ Try in incognito/private mode
-- ✅ Clear browser cache
+- Check if backend API is running
+- Look at browser console for errors (F12)
+- Check Network tab for failed requests
+- Try in incognito/private mode
+- Clear browser cache
 
 ---
 
@@ -542,21 +542,21 @@ MIT License - See [LICENSE](../LICENSE) file for details
 
 <div align="center">
 
-**Built with ❤️ using React, Vite, and FastAPI**
+**Built with React, Vite, and FastAPI**
 
-⭐ Star this repo if you find it helpful!
+Star this repo if you find it helpful!
 
-[🏠 Home](../README.md) • [📖 API Docs](../API_README.md) • [🚀 Quick Start](../QUICKSTART.md)
+[Home](../README.md) • [API Docs](../API_README.md) • [Quick Start](../QUICKSTART.md)
 
-</div>e
+</div>
 
 **Check:**
 
-1. ✅ Backend API is running
-2. ✅ Ollama is running: `ollama list`
-3. ✅ Mistral model is available: `ollama pull mistral`
-4. ✅ MongoDB has movie data: `python data_ingestion.py`
-5. ✅ Check browser console for error messages
+1. Backend API is running
+2. Ollama is running: `ollama list`
+3. Mistral model is available: `ollama pull mistral`
+4. MongoDB has movie data: `python data_ingestion.py`
+5. Check browser console for error messages
 
 ### Debug Mode
 
@@ -575,7 +575,7 @@ apiClient.interceptors.response.use(response => {
 });
 ```
 
-## 📊 Performance
+## Performance
 
 ### Bundle Size
 
@@ -590,12 +590,12 @@ dist/
 
 ### Optimization Features
 
-✅ **Vite HMR** - Instant hot module replacement (<50ms)  
-✅ **Code Splitting** - Automatic route-based splitting  
-✅ **Lazy Loading** - Images load on scroll  
-✅ **Tree Shaking** - Unused code removed  
-✅ **Minification** - Terser for JS, cssnano for CSS  
-✅ **Compression** - Gzip/Brotli supported  
+**Vite HMR** - Instant hot module replacement (<50ms)  
+**Code Splitting** - Automatic route-based splitting  
+**Lazy Loading** - Images load on scroll  
+**Tree Shaking** - Unused code removed  
+**Minification** - Terser for JS, cssnano for CSS  
+**Compression** - Gzip/Brotli supported  
 
 ### Performance Tips
 
@@ -605,7 +605,7 @@ dist/
 4. **Optimize images** - Use TMDB's w300 instead of original
 5. **Enable compression** - Configure your web server (nginx, Apache)
 
-## 🚢 Deployment
+## Deployment
 
 ### Vercel (Recommended)
 
@@ -718,7 +718,7 @@ npm run build
 
 **Note:** You'll need to configure API proxy separately (use CORS from backend).
 
-## 🧪 Testing
+## Testing
 
 ### Manual Testing Checklist
 
@@ -739,12 +739,12 @@ npm run build
 
 Tested on:
 
-- ✅ Chrome 120+ (Recommended)
-- ✅ Firefox 120+
-- ✅ Safari 17+
-- ✅ Edge 120+
+- Chrome 120+ (Recommended)
+- Firefox 120+
+- Safari 17+
+- Edge 120+
 
-## 💡 Tips & Tricks
+## Tips & Tricks
 
 ### Developer Tips
 
@@ -770,7 +770,7 @@ Tested on:
 4. **Recently viewed** - Track viewing history
 5. **Share button** - Share movie lists via URL
 
-## 📚 Resources
+## Resources
 
 ### Official Documentation
 
@@ -790,7 +790,7 @@ Tested on:
 - [FastAPI](https://fastapi.tiangolo.com/) - Backend framework
 - [LangChain](https://python.langchain.com/) - AI agent framework
 
-## ❓ FAQ
+## FAQ
 
 **Q: Can I use TypeScript instead of JavaScript?**  
 A: Yes! Run `npm install -D typescript @types/react @types/react-dom` and rename files to `.tsx`
@@ -810,7 +810,7 @@ A: Not yet, but the web app is fully responsive and works great on mobile browse
 **Q: Can I customize the theme?**  
 A: Absolutely! See the [Theming](#-theming--customization) section
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Here's how:
 
@@ -829,17 +829,17 @@ Contributions are welcome! Here's how:
 - Use **CSS modules** or styled-components for scoped styles
 - Write **meaningful commit messages**
 
-## 📝 License
+## License
 
 MIT License - See LICENSE file for details
 
-## 🔗 Related
+## Related
 
 - [Backend API Documentation](../API_README.md)
 - [Project Architecture](../ARCHITECTURE.md)
 - [Quick Start Guide](../QUICKSTART.md)
 
-## 💬 Support
+## Support
 
 For issues or questions:
 
@@ -849,4 +849,4 @@ For issues or questions:
 
 ---
 
-Built with ❤️ using React, Vite, and FastAPI
+Built with React, Vite, and FastAPI

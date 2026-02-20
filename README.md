@@ -1,8 +1,8 @@
-# 🎬 TMDB Movie AI Agent with MongoDB and LangChain
+# TMDB Movie AI Agent with MongoDB and LangChain
 
 An intelligent AI agent with **REST API** built with **LangChain 1.0+**, **FastAPI**, and **MongoDB** that can answer questions about 50,000 movies from The Movie Database (TMDB). The agent uses Ollama (local LLM) to understand natural language queries and intelligently retrieves information from a MongoDB database.
 
-## 🌟 Features
+## Features
 
 - **Natural Language Queries**: Ask questions in plain English
 - **REST API with FastAPI**: 10 endpoints with automatic OpenAPI documentation
@@ -19,7 +19,7 @@ An intelligent AI agent with **REST API** built with **LangChain 1.0+**, **FastA
 - **Centralized Logging**: Loguru with rotation, retention, and separate log files (agent.log, api.log, main.log)
 - **Redis Caching**: High-performance query caching for frequent requests with automatic fallback
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -46,18 +46,19 @@ An intelligent AI agent with **REST API** built with **LangChain 1.0+**, **FastA
 ```
 
 The agent uses LangChain's 1.0+ create_agent API to:
+
 1. Understand user intent via Ollama LLM
 2. Automatically select appropriate database tools
 3. Query MongoDB efficiently
 4. Format responses in a user-friendly way
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.8 or higher
 - MongoDB (local installation or MongoDB Atlas)
 - Ollama installed and running locally
 
-## 🚀 Installation
+## Installation
 
 ### 1. Clone or Navigate to Project Directory
 
@@ -68,11 +69,13 @@ cd c:\Users\timot\Desktop\langchain
 ### 2. Install MongoDB
 
 **Option A: Local MongoDB (Windows)**
+
 - Download from [MongoDB Community Server](https://www.mongodb.com/try/download/community)
 - Install and start the MongoDB service
 - Default connection: `mongodb://localhost:27017/`
 
 **Option B: MongoDB Atlas (Cloud)**
+
 - Sign up at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
 - Create a free cluster
 - Get your connection string (format: `mongodb+srv://username:password@cluster.mongodb.net/`)
@@ -80,11 +83,13 @@ cd c:\Users\timot\Desktop\langchain
 ### 3. Install Ollama
 
 **Download and Install Ollama:**
+
 - Visit [Ollama.ai](https://ollama.ai/)
 - Download and install Ollama for Windows
 - Start Ollama (it runs as a background service)
 
 **Pull a Model:**
+
 ```bash
 # Pull one of the supported models
 ollama pull mistral
@@ -95,6 +100,7 @@ ollama pull qwen2.5
 ```
 
 Verify Ollama is running:
+
 ```bash
 ollama list
 ```
@@ -106,6 +112,7 @@ uv sync
 ```
 
 **Dependencies include:**
+
 - langchain>=0.3.0 (Agent framework)
 - fastapi>=0.109.0 (REST API)
 - pymongo==4.6.1 (MongoDB driver)
@@ -122,6 +129,7 @@ Create a `.env` file in the project root:
 # Copy the example file
 copy .env.example .env
 ```
+
 Edit `.env` and add your configuration:
 
 ```env
@@ -156,6 +164,7 @@ python data_ingestion.py
 ```
 
 This will:
+
 - Connect to MongoDB
 - Load the IMDB CSV data
 - Clean and structure the data
@@ -163,6 +172,7 @@ This will:
 - Display database statistics
 
 Expected output:
+
 ```
 Connecting to MongoDB...
 Clearing existing data...
@@ -182,7 +192,7 @@ Average TMDB rating: 6.2
 Year range: 1874 - 2025
 ```
 
-## 🎮 Usage
+## Usage
 
 ### Option 1: Interactive CLI Agent
 
@@ -193,6 +203,7 @@ python main.py
 ### Option 2: REST API Server
 
 **Start the API:**
+
 ```bash
 # Using Uvicorn directly
 uvicorn api:app --reload --host 0.0.0.0 --port 8000
@@ -202,6 +213,7 @@ python run_api.py
 ```
 
 **Access the API:**
+
 - API Base: `http://localhost:8000`
 - Interactive Docs (Swagger): `http://localhost:8000/docs`
 - ReDoc Documentation: `http://localhost:8000/redoc`
@@ -209,6 +221,7 @@ python run_api.py
 ### Option 3: React Web Frontend
 
 **Start the frontend:**
+
 ```bash
 # Navigate to frontend directory
 cd frontend
@@ -221,12 +234,14 @@ npm run dev
 ```
 
 **Access the frontend:**
+
 - Web App: `http://localhost:3000`
 - Features: Movie search, AI chat, advanced filters, Netflix-style UI
 
 **Note:** The API server must be running on port 8000 for the frontend to work.
 
 **Full Stack Setup:**
+
 ```bash
 # Terminal 1: Start backend API
 uvicorn api:app --reload
@@ -239,6 +254,7 @@ npm run dev
 For complete frontend documentation, see [frontend/README.md](frontend/README.md).
 
 **API Examples:**
+
 ```bash
 # Search movies
 curl "http://localhost:8000/api/movies/search?title=batman"
@@ -257,40 +273,45 @@ For complete API documentation, see [API_README.md](API_README.md).
 ### Example Queries
 
 **Search & Discovery:**
+
 ```
-🎬 You: What are the top 10 rated movies?
-🎬 You: Find movies about space or sci-fi
-🎬 You: Show me Christopher Nolan movies
-🎬 You: Search for Marvel movies
+You: What are the top 10 rated movies?
+You: Find movies about space or sci-fi
+You: Show me Christopher Nolan movies
+You: Search for Marvel movies
 ```
 
 **Actor & Director Queries:**
+
 ```
-🎬 You: What movies has Leonardo DiCaprio been in?
-🎬 You: Show me all Quentin Tarantino films
-🎬 You: Find movies with Tom Hanks
+You: What movies has Leonardo DiCaprio been in?
+You: Show me all Quentin Tarantino films
+You: Find movies with Tom Hanks
 ```
 
 **Time-based Queries:**
+
 ```
-🎬 You: What are the best movies from the 1990s?
-🎬 You: Show me movies between 2000 and 2010
+You: What are the best movies from the 1990s?
+You: Show me movies between 2000 and 2010
 ```
 
 **Statistics & Analysis:**
+
 ```
-🎬 You: What are the database statistics?
-🎬 You: Who are the most prolific directors?
+You: What are the database statistics?
+You: Who are the most prolific directors?
 ```
 
 **Recommendations:**
+
 ```
-🎬 You: Recommend a thriller movie
-🎬 You: I want to watch something like Inception
-🎬 You: Suggest a classic movie
+You: Recommend a thriller movie
+You: I want to watch something like Inception
+You: Suggest a classic movie
 ```
 
-## 📝 Logging
+## Logging
 
 The application uses **loguru** for centralized logging with automatic rotation and retention:
 
@@ -299,6 +320,7 @@ The application uses **loguru** for centralized logging with automatic rotation 
 - **main.log** - CLI interactions, user queries, errors
 
 **Configuration:**
+
 - Rotation: 10 MB per file
 - Retention: 7 days
 - Format: `{time} | {level} | {name}:{function}:{line} - {message}`
@@ -307,7 +329,7 @@ The application uses **loguru** for centralized logging with automatic rotation 
 
 Logs are automatically excluded from Git (.gitignore).
 
-## 🛠️ Project Structure
+## Project Structure
 
 ```
 langchain_ollama/
@@ -354,7 +376,7 @@ langchain_ollama/
 └── QUICKSTART.md              # Quick setup guide
 ```
 
-## 🔧 How It Works
+## How It Works
 
 ### 1. Data Ingestion (`data_ingestion.py`)
 
@@ -366,6 +388,7 @@ langchain_ollama/
 ### 2. Movie Agent (`agent.py`)
 
 **Tools Available (8 tools):**
+
 - `search_movies_by_title`: Search by movie title
 - `get_movies_by_director`: Find movies by director
 - `get_top_rated_movies`: Get highest-rated movies
@@ -376,6 +399,7 @@ langchain_ollama/
 - `advanced_search`: Complex multi-field search
 
 **Agent Workflow (LangChain 1.0+):**
+
 1. Receives natural language query
 2. Uses Ollama LLM (mistral/llama3.2/llama3.1/qwen2.5) to understand intent
 3. Selects appropriate tool(s) automatically
@@ -398,7 +422,7 @@ langchain_ollama/
 - Runs on port 8000
 - Start with: `uvicorn api:app --reload` or `python run_api.py`
 
-## 📊 Database Schema
+## Database Schema
 
 Each movie document in MongoDB contains:
 
@@ -433,7 +457,7 @@ Each movie document in MongoDB contains:
 }
 ```
 
-## 🔍 Advanced Features
+## Advanced Features
 
 ### Custom Queries
 
@@ -459,13 +483,14 @@ self.collection.aggregate([
 ])
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### MongoDB Connection Error
 
 **Problem:** `pymongo.errors.ServerSelectionTimeoutError`
 
 **Solutions:**
+
 - Ensure MongoDB is running: `net start MongoDB` (Windows)
 - Check connection string in `.env`
 - For Atlas: Whitelist your IP address
@@ -475,6 +500,7 @@ self.collection.aggregate([
 **Problem:** `Unable to initialize ChatOllama with available models`
 
 **Solutions:**
+
 - Ensure Ollama is installed and running
 - Check if Ollama service is active: `ollama list`
 - Verify the model is pulled: `ollama pull mistral`
@@ -486,6 +512,7 @@ self.collection.aggregate([
 **Problem:** Agent returns "No movies found"
 
 **Solutions:**
+
 - Run `python data_ingestion.py` to load data
 - Check MongoDB connection
 - Verify database and collection names in `.env`
@@ -495,11 +522,12 @@ self.collection.aggregate([
 **Problem:** `ModuleNotFoundError`
 
 **Solutions:**
+
 ```bash
 uv sync
 ```
 
-## 📈 Performance Tips
+## Performance Tips
 
 1. **Indexes**: The ingestion script creates indexes automatically
 2. **Limit Results**: Tools limit results to prevent overwhelming responses
@@ -509,7 +537,7 @@ uv sync
    - See [CACHING.md](CACHING.md) for details
    - Monitor cache performance: `GET /api/cache/stats`
 
-## 🔐 Security Best Practices
+## Security Best Practices
 
 - Never commit `.env` file to version control
 - Use environment variables for all configuration
@@ -518,7 +546,7 @@ uv sync
 - Use read-only database users when possible
 - Keep Ollama updated to the latest version
 
-## 🚀 Next Steps
+## Next Steps
 
 **Enhancements you can add:**
 
@@ -533,7 +561,7 @@ uv sync
 9. **Multi-language**: Add support for multiple languages
 10. **WebSockets**: Real-time streaming responses
 
-## 📚 Resources
+## Resources
 
 - [LangChain Documentation](https://python.langchain.com/)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
@@ -544,19 +572,20 @@ uv sync
 - [TMDB Dataset](https://www.kaggle.com/datasets/asaniczka/tmdb-movies-dataset-2023-930k-movies)
 - [API Documentation](API_README.md) - Complete REST API reference
 
-## 📝 License
+## License
 
 This project is for educational purposes. The TMDB dataset is used under fair use for learning and demonstration.
 
-## 🤝 Contributing
+## Contributing
 
 Feel free to fork, modify, and enhance this project! Some ideas:
+
 - Add more sophisticated NLP features
 - Implement user preferences and history
 - Add movie recommendation algorithms
 - Create a web dashboard
 
-## 💡 Tips for Best Results
+## Tips for Best Results
 
 1. **Be Specific**: "Show me sci-fi movies from the 2000s" works better than "show movies"
 2. **Use Natural Language**: The agent understands conversational queries
@@ -565,7 +594,7 @@ Feel free to fork, modify, and enhance this project! Some ideas:
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 - **[README.md](README.md)** - This file (main documentation)
 - **[API_README.md](API_README.md)** - Complete REST API documentation
@@ -577,6 +606,6 @@ Feel free to fork, modify, and enhance this project! Some ideas:
 
 ---
 
-**Built with ❤️ using LangChain 1.0+, FastAPI, MongoDB, and Ollama**
+**Built with LangChain 1.0+, FastAPI, MongoDB, and Ollama**
 
-Happy movie hunting! 🎬🍿
+Happy movie hunting!

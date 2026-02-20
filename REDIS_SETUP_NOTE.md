@@ -1,4 +1,4 @@
-# ⚠️ IMPORTANT: Redis Password Required
+# IMPORTANT: Redis Password Required
 
 Your Redis instance requires authentication. To enable caching:
 
